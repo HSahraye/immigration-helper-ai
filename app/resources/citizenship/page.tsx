@@ -25,7 +25,7 @@ export default function CitizenshipPage() {
         <AgentChat
           title="Citizenship Assistant"
           description="Get help with citizenship application and requirements"
-          apiEndpoint="/api/citizenship-agent"
+          endpoint="/api/citizenship-agent"
         />
       </div>
     </div>

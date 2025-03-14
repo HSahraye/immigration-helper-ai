@@ -90,7 +90,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
         <AgentChat
           title={title}
           description={description}
-          apiEndpoint={`/api/${params.category}-agent`}
+          endpoint={`/api/${params.category}-agent`}
         />
       </div>
     </div>

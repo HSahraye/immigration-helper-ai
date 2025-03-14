@@ -25,7 +25,7 @@ export default function PermanentResidencyPage() {
         <AgentChat
           title="Permanent Residency Assistant"
           description="Get help with permanent residency application and requirements"
-          apiEndpoint="/api/permanent-residency-agent"
+          endpoint={`/api/permanent-residency-agent`}
         />
       </div>
     </div>

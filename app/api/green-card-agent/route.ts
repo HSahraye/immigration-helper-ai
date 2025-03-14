@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const SYSTEM_PROMPT = `You are an AI assistant specializing in visa applications and immigration processes. 
+const SYSTEM_PROMPT = `You are an AI assistant specializing in green card applications and processes. 
 You provide accurate, helpful information about:
-- Different types of visas and their requirements
+- Green card eligibility categories
 - Application processes and timelines
 - Required documentation and evidence
 - Interview preparation
-- Common visa issues and solutions
 - Status checks and updates
+- Adjustment of status vs consular processing
+- Common issues and solutions
 
 Provide clear, concise answers and always maintain a professional and supportive tone.`;
 
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       message: response.choices[0]?.message?.content || 'No response generated'
     });
   } catch (error) {
-    console.error('Error in visa agent:', error);
+    console.error('Error in green card agent:', error);
     return NextResponse.json(
       { error: 'Failed to process request' },
       { status: 500 }

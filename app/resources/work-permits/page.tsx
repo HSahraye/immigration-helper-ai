@@ -25,7 +25,7 @@ export default function WorkPermitsPage() {
         <AgentChat
           title="Work Permits Assistant"
           description="Get help with work permit applications and employment-based immigration"
-          apiEndpoint="/api/work-permits-agent"
+          endpoint="/api/work-permits-agent"
         />
       </div>
     </div>

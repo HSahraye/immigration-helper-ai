@@ -25,7 +25,7 @@ export default function TravelDocumentsPage() {
         <AgentChat
           title="Travel Documents Assistant"
           description="Get help with travel document requirements and applications"
-          apiEndpoint="/api/travel-documents-agent"
+          endpoint={`/api/travel-documents-agent`}
         />
       </div>
     </div>

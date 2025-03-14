@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize the OpenAI client with error handling
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OpenAI API key is not configured in environment variables');
+  }
+  return new OpenAI({ apiKey });
+};
 
 const SYSTEM_PROMPT = `You are a knowledgeable immigration assistant specializing in family sponsorship. Your role is to:
 1. Explain family sponsorship eligibility requirements
@@ -29,10 +33,14 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      console.error('OpenAI API key is not configured');
+    // Initialize OpenAI with error handling
+    let openai;
+    try {
+      openai = getOpenAIClient();
+    } catch (error) {
+      console.error('OpenAI initialization error:', error);
       return NextResponse.json(
-        { error: 'OpenAI API key is not configured' },
+        { error: 'Failed to initialize OpenAI client' },
         { status: 500 }
       );
     }

@@ -6,65 +6,51 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const SYSTEM_PROMPT = `You are a knowledgeable immigration assistant specializing in work permits. Your role is to:
-1. Explain different types of work permits and visas
-2. Guide users through work permit application processes
-3. Clarify eligibility requirements for work permits
-4. Explain employer sponsorship requirements
-5. Provide information about processing times and fees
-6. Help with work permit renewals and extensions
+const SYSTEM_PROMPT = `You are an AI assistant specializing in work permits and employment-based immigration. 
+You provide accurate, helpful information about:
+- Different types of work permits and visas
+- Application processes and timelines
+- Required documentation and evidence
+- Employer sponsorship requirements
+- Labor certification process
+- Status checks and updates
+- Common issues and solutions
 
-Always be professional, accurate, and empathetic. If you're unsure about something, say so rather than providing incorrect information.`;
+Provide clear, concise answers and always maintain a professional and supportive tone.`;
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { message } = await request.json();
-    console.log('Received message:', message);
+    const { message } = await req.json();
 
     if (!message) {
-      console.log('No message provided');
       return NextResponse.json(
-        { error: 'Message is required' },
+        { error: 'No message provided' },
         { status: 400 }
       );
     }
 
     if (!process.env.OPENAI_API_KEY) {
-      console.error('OpenAI API key is not configured');
       return NextResponse.json(
-        { error: 'OpenAI API key is not configured' },
+        { error: 'OpenAI API key not configured' },
         { status: 500 }
       );
     }
 
-    console.log('Making request to OpenAI...');
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: message }
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: message }
       ],
-      temperature: 0.7,
-      max_tokens: 500,
     });
 
-    console.log('Received response from OpenAI');
     return NextResponse.json({
-      message: completion.choices[0].message.content
+      message: response.choices[0]?.message?.content || 'No response generated'
     });
-  } catch (error: any) {
-    console.error('Detailed error:', {
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-      response: error.response?.data
-    });
-
+  } catch (error) {
+    console.error('Error in work permits agent:', error);
     return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        details: error.message 
-      },
+      { error: 'Failed to process request' },
       { status: 500 }
     );
   }

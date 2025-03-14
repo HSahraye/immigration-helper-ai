@@ -25,7 +25,7 @@ export default function FamilySponsorshipPage() {
         <AgentChat
           title="Family Sponsorship Assistant"
           description="Get help with sponsoring family members"
-          apiEndpoint="/api/family-sponsorship-agent"
+          endpoint="/api/family-sponsorship-agent"
         />
       </div>
     </div>

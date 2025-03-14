@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Folder } from 'lucide-react';
-import AgentChat from '../../components/AgentChat';
+import AgentChat from '../../../components/AgentChat';
 
 export default function VisaApplicationsPage() {
   return (
@@ -25,7 +25,7 @@ export default function VisaApplicationsPage() {
         <AgentChat
           title="Visa Applications Assistant"
           description="Get help with different types of visas and application processes"
-          apiEndpoint="/api/visa-agent"
+          endpoint="/api/visa-agent"
         />
       </div>
     </div>

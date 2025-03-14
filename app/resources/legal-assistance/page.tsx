@@ -25,7 +25,7 @@ export default function LegalAssistancePage() {
         <AgentChat
           title="Legal Assistance"
           description="Get help with legal resources and immigration lawyer information"
-          apiEndpoint="/api/legal-assistance-agent"
+          endpoint={`/api/legal-assistance-agent`}
         />
       </div>
     </div>

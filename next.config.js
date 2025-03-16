@@ -9,7 +9,6 @@ const nextConfig = {
   },
   env: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    NODE_ENV: process.env.NODE_ENV,
   },
   // Ensure images from OpenAI are properly handled
   images: {

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "npm run build:scripts && next build",
     "start": "next start",
     "lint": "next lint",
     "build:scripts": "tsc -p tsconfig.scripts.json",

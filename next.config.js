@@ -20,6 +20,12 @@ const nextConfig = {
       },
     ],
   },
+  // Fix for Vercel deployment
+  output: 'standalone',
+  experimental: {
+    // Disable client-side instrumentation
+    instrumentationHook: false,
+  },
 }
 
 module.exports = nextConfig 

@@ -4,15 +4,5 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "outputDirectory": ".next",
-  "env": {
-    "OPENAI_API_KEY": "@openai-api-key",
-    "NODE_ENV": "production"
-  },
-  "build": {
-    "env": {
-      "OPENAI_API_KEY": "@openai-api-key",
-      "NODE_ENV": "production"
-    }
-  }
+  "outputDirectory": ".next"
 } 

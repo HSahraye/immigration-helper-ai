@@ -251,7 +251,7 @@ ${initialAssessmentQuestions[0]}`
   const toggleCategory = (category: string) => {
     setExpandedCategories(prev => ({
       ...prev,
-      [category]: !prev[category]
+      [category]: !prev[category as keyof typeof prev]
     }));
   };
 
@@ -595,13 +595,13 @@ ${initialAssessmentQuestions[0]}`
                   className="flex items-center justify-between w-full p-2 text-gray-300 hover:bg-[#303134] rounded-lg"
                 >
                   <span className="font-medium">{category.title}</span>
-                  {expandedCategories[key] ? (
+                  {expandedCategories[key as keyof typeof expandedCategories] ? (
                     <ChevronDown size={16} />
                   ) : (
                     <ChevronRight size={16} />
                   )}
                 </button>
-                {expandedCategories[key] && (
+                {expandedCategories[key as keyof typeof expandedCategories] && (
                   <div className="mt-1 ml-2 space-y-1">
                     {category.items.map((item) => (
                       <button

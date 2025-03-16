@@ -36,6 +36,11 @@ export default function AgentChat({ title, description, endpoint }: AgentChatPro
       setIsFileUploading(true);
       setError(null);
       
+      setMessages(prev => [
+        ...prev,
+        { role: 'user', content: `[Uploading file: ${fileData.name}]` }
+      ]);
+      
       const response = await fetch('/api/analyze-file', {
         method: 'POST',
         headers: {
@@ -43,7 +48,7 @@ export default function AgentChat({ title, description, endpoint }: AgentChatPro
         },
         body: JSON.stringify({
           file: fileData,
-          context: `You are an immigration assistant. Please analyze this ${fileData.type} file in the context of ${title} and provide relevant advice or insights.`,
+          context: `You are an immigration assistant. Please analyze this ${fileData.type} file in the context of ${title} and provide relevant advice or insights. If this is a document like a PDF, please extract and summarize the key information.`,
         }),
       });
 
@@ -53,19 +58,33 @@ export default function AgentChat({ title, description, endpoint }: AgentChatPro
         throw new Error(data.error || 'Failed to analyze file');
       }
       
-      setMessages(prev => [
-        ...prev,
-        { role: 'user', content: `[File uploaded: ${fileData.name}]` },
-        { role: 'assistant', content: data.analysis }
-      ]);
+      setMessages(prev => {
+        const updatedMessages = [...prev];
+        if (updatedMessages.length > 0 && updatedMessages[updatedMessages.length - 1].content.includes('Uploading file')) {
+          updatedMessages[updatedMessages.length - 1] = { 
+            role: 'user', 
+            content: `[File uploaded: ${fileData.name}]` 
+          };
+        }
+        updatedMessages.push({ role: 'assistant', content: data.analysis });
+        return updatedMessages;
+      });
     } catch (error) {
       console.error('Error analyzing file:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to analyze file';
       setError(errorMessage);
-      setMessages(prev => [
-        ...prev,
-        { role: 'error', content: errorMessage }
-      ]);
+      
+      setMessages(prev => {
+        const updatedMessages = [...prev];
+        if (updatedMessages.length > 0 && updatedMessages[updatedMessages.length - 1].content.includes('Uploading file')) {
+          updatedMessages[updatedMessages.length - 1] = { 
+            role: 'user', 
+            content: `[File upload attempted: ${fileData.name}]` 
+          };
+        }
+        updatedMessages.push({ role: 'error', content: errorMessage });
+        return updatedMessages;
+      });
     } finally {
       setIsFileUploading(false);
     }

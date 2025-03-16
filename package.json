@@ -6,17 +6,32 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:scripts": "tsc -p tsconfig.scripts.json",
+    "train": "npm run build:scripts && node dist/scripts/runTrainingPipeline.js",
+    "train:collect": "npm run build:scripts && node dist/scripts/trainAgents.js",
+    "train:test": "npm run build:scripts && node dist/scripts/testAgents.js",
+    "train:update": "npm run build:scripts && node dist/scripts/updateAgentRoutes.js",
+    "test:openai": "npm run build:scripts && node dist/scripts/testOpenAI.js",
+    "test:agents": "npm run build:scripts && node dist/scripts/testAgents.js",
+    "test:file-upload": "npm run build:scripts && node dist/scripts/testFileUpload.js",
+    "create:sample-pdf": "npm run build:scripts && node dist/scripts/createSamplePdf.js",
+    "update:openai-client": "npm run build:scripts && node dist/scripts/updateOpenAIClient.js"
   },
   "dependencies": {
+    "@types/jsdom": "^21.1.6",
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "autoprefixer": "^10.0.0",
+    "axios": "^1.6.2",
+    "dotenv": "^16.4.7",
+    "jsdom": "^22.1.0",
     "lucide-react": "^0.300.0",
     "next": "^14.0.0",
     "next-auth": "^4.24.11",
     "openai": "^4.87.3",
+    "pdf-lib": "^1.17.1",
     "postcss": "^8.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -29,7 +44,8 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.1.0"
+    "eslint-config-next": "14.1.0",
+    "ts-node": "^10.9.2"
   },
   "engines": {
     "node": ">=20.0.0"

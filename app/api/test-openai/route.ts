@@ -1,11 +1,28 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+// Initialize the OpenAI client with error handling
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OpenAI API key is not configured in environment variables');
+  }
+  return new OpenAI({ apiKey });
+};
+
 export async function GET() {
   try {
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    // Initialize OpenAI with error handling
+    let openai;
+    try {
+      openai = getOpenAIClient();
+    } catch (error) {
+      console.error('OpenAI initialization error:', error);
+      return NextResponse.json({
+        status: 'error',
+        message: 'OpenAI API key is not configured',
+      }, { status: 500 });
+    }
 
     // Try a simple completion to verify the API key
     const response = await openai.chat.completions.create({

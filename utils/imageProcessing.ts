@@ -1,13 +1,33 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Only initialize OpenAI client on the server side
+const getOpenAIClient = () => {
+  // Check if we're on the server side
+  if (typeof window === 'undefined') {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('OpenAI API key is not configured in environment variables');
+    }
+    return new OpenAI({ apiKey });
+  }
+  return null;
+};
 
 export async function analyzeImage(imageBase64: string, prompt?: string) {
   try {
+    // This function should only be called from the server side
+    // We'll return a placeholder message if called from the client side
+    if (typeof window !== 'undefined') {
+      return "Image analysis is performed on the server side.";
+    }
+    
+    const openai = getOpenAIClient();
+    if (!openai) {
+      throw new Error('OpenAI client could not be initialized');
+    }
+    
     const response = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",

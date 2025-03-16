@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { validateImage } from '../../utils/imageProcessing';
+import { validateImage } from '../utils/imageProcessing';
 
 interface ImageUploadProps {
   onImageSelect: (base64: string) => void;

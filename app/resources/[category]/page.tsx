@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Folder, Users, Briefcase, GraduationCap, Home, Plane, Scale } from 'lucide-react';
-import AgentChat from '@components/AgentChat';
+import AgentChat from '../../../components/AgentChat';
 
 const categoryIcons = {
   'visa-applications': <Folder className="w-6 h-6" />,

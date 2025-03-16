@@ -4,13 +4,7 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Handle redirects from (tabs) directory
-  if (pathname.includes('/(tabs)') || pathname.startsWith('/(tabs)')) {
-    const newPath = pathname.replace('/(tabs)', '');
-    return NextResponse.redirect(new URL(newPath, request.url));
-  }
-  
-  // Protect routes that require authentication
+  // Simplified middleware that just handles authentication
   if (
     pathname.startsWith('/profile') ||
     pathname.includes('/resources/')

@@ -16,9 +16,12 @@ const nextConfig = {
   // Enhanced experimental settings to fix React and SSG issues
   experimental: {
     instrumentationHook: false,
-    serverComponentsExternalPackages: ['next-auth', 'react', 'react-dom'],
+    // Remove next-auth from serverComponentsExternalPackages to avoid conflict with transpilePackages
+    serverComponentsExternalPackages: ['react', 'react-dom'],
     optimizePackageImports: ['next-auth', 'lucide-react'],
   },
+  // Explicitly define transpilePackages to include next-auth
+  transpilePackages: ['next-auth'],
   // Disable type checking during build for faster builds
   typescript: {
     ignoreBuildErrors: true,

@@ -1,13 +1,27 @@
+# Settings for Netlify deployment
 [build]
-  command = "npm run build:scripts && npm run build"
+  command = "npm run build"
   publish = ".next"
-
+  
+# Set NODE_VERSION for the build environment
 [build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS = "--legacy-peer-deps"
+  NODE_VERSION = "18.17.0"
 
+# Ensure Next.js SSR routes are handled correctly
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Redirect all unmatched routes to index for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Ensure API routes are handled correctly
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
 
 [functions]
   directory = "netlify/functions"

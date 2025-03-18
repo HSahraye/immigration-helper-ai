@@ -29,7 +29,7 @@ function AppContent({ children }: { children: ReactNode }) {
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <SessionProvider>
+    <SessionProvider session={null}>
       <ChatLimitProvider>
         <AppContent>
           {children}

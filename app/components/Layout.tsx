@@ -10,7 +10,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <SessionProvider>
+    <SessionProvider session={null}>
       <div className="min-h-screen bg-[#202124] text-gray-200 flex flex-col">
         <Navigation />
         <main className="flex-grow">

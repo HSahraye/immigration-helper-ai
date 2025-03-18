@@ -26,6 +26,8 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Disable static exports to avoid SessionProvider issues
+  output: 'standalone',
 }
 
 module.exports = nextConfig 

@@ -66,6 +66,9 @@ const categories = [
 export default function ResourcesPage() {
   return (
     <div className="min-h-screen bg-[#202124] text-gray-200">
+      <div className="fixed top-0 left-0 w-full bg-red-600 text-white text-center py-4 z-50 text-xl font-bold">
+        🚨 UPDATED RESOURCES PAGE: MARCH 19 2025 - DEPLOYMENT VERIFICATION 🚨
+      </div>
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-2">Immigration Resources</h1>
         <p className="text-gray-400 mb-8">Comprehensive guides and information for your immigration journey</p>

@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 export default function HomePage() {
   const router = useRouter();
 
-  useEffect(() => {
-    router.push('/resources');
-  }, [router]);
+  // Temporarily disabled redirect for testing deployment
+  // useEffect(() => {
+  //   router.push('/resources');
+  // }, [router]);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">

@@ -7,6 +7,10 @@
   NPM_FLAGS = "--legacy-peer-deps"
   # Provide dummy key for build time to prevent errors - will be overridden by real key in Netlify environment variables
   OPENAI_API_KEY = "sk_dummy_key_for_netlify_build_only_will_be_replaced_in_production"
+  # Increase Node.js memory limit to avoid memory issues during build
+  NODE_OPTIONS = "--max_old_space_size=4096"
+  # Disable static generation of API routes
+  NEXT_PRIVATE_STANDALONE = "1"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

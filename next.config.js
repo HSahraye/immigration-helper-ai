@@ -13,10 +13,11 @@ const nextConfig = {
       },
     ],
   },
-  // Simplified experimental settings
+  // Enhanced experimental settings to fix React and SSG issues
   experimental: {
     instrumentationHook: false,
-    serverComponentsExternalPackages: ['next-auth'],
+    serverComponentsExternalPackages: ['next-auth', 'react', 'react-dom'],
+    optimizePackageImports: ['next-auth', 'lucide-react'],
   },
   // Disable type checking during build for faster builds
   typescript: {
@@ -26,10 +27,26 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Disable static exports to avoid SessionProvider issues
+  // Output configuration for better handling of React dependencies
   output: 'standalone',
   // Disable source maps for production build
   productionBrowserSourceMaps: false,
+  // Optimize React runtime to avoid hooks issues
+  compiler: {
+    styledComponents: true
+  },
+  webpack: (config, { isServer }) => {
+    // Fix for static page generation with React hooks
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
+  }
 }
 
 module.exports = nextConfig 

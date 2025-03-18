@@ -1,8 +1,25 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+// Skip OpenAI operations during static site generation
+const isBuildTime = () => {
+  return process.env.NODE_ENV === 'production' && typeof window === 'undefined' && !process.env.NETLIFY;
+};
+
 // Initialize the OpenAI client with error handling
 const getOpenAIClient = () => {
+  // Return mock during build time
+  if (isBuildTime()) {
+    console.log('Build time detected, returning mock OpenAI client');
+    return {
+      chat: {
+        completions: {
+          create: async () => ({ choices: [{ message: { content: 'Build time mock response' } }] })
+        }
+      }
+    } as unknown as OpenAI;
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error('OpenAI API key is not configured in environment variables');
@@ -12,6 +29,14 @@ const getOpenAIClient = () => {
 
 export async function GET() {
   try {
+    // Skip actual API calls during build time
+    if (isBuildTime()) {
+      return NextResponse.json({
+        status: 'success',
+        message: 'Build time mock response'
+      });
+    }
+
     // Initialize OpenAI with error handling
     let openai;
     try {

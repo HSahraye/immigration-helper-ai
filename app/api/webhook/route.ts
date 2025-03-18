@@ -3,9 +3,8 @@ import Stripe from 'stripe';
 import { prisma } from '@/lib/prisma';
 
 // Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  // @ts-ignore - Allow any valid Stripe API version
-  apiVersion: '2022-08-01',
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+  apiVersion: '2025-02-24.acacia',
 });
 
 export async function POST(req: NextRequest) {

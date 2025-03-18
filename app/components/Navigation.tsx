@@ -27,6 +27,16 @@ export default function Navigation() {
               <Link href="/resources" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
                 Services
               </Link>
+              {session && (
+                <>
+                  <Link href="/chat" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
+                    Chat
+                  </Link>
+                  <Link href="/documents" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
+                    Documents
+                  </Link>
+                </>
+              )}
               {session ? (
                 <Link href="/profile" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
                   My Account
@@ -91,6 +101,20 @@ export default function Navigation() {
             )}
             {session && (
               <>
+                <Link
+                  href="/chat"
+                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Chat
+                </Link>
+                <Link
+                  href="/documents"
+                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Documents
+                </Link>
                 <Link
                   href="/profile"
                   className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"

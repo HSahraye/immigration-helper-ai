@@ -3,14 +3,26 @@
 import { ReactNode } from 'react';
 import Navigation from './Navigation';
 import { SessionProvider } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  // Create an empty session object with the required properties
+  const emptySession: Session = {
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 1 day from now
+    user: { 
+      id: "placeholder-id",
+      name: null, 
+      email: null, 
+      image: null 
+    }
+  };
+
   return (
-    <SessionProvider session={null}>
+    <SessionProvider session={emptySession}>
       <div className="min-h-screen bg-[#202124] text-gray-200 flex flex-col">
         <Navigation />
         <main className="flex-grow">

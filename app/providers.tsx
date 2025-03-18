@@ -4,6 +4,7 @@ import { SessionProvider } from 'next-auth/react';
 import { ChatLimitProvider } from './contexts/ChatLimitContext';
 import Navigation from './components/Navigation';
 import { ReactNode } from 'react';
+import { Session } from 'next-auth';
 
 // Separate client component for layout
 function AppContent({ children }: { children: ReactNode }) {
@@ -28,8 +29,19 @@ function AppContent({ children }: { children: ReactNode }) {
 }
 
 export function Providers({ children }: { children: ReactNode }) {
+  // Create an empty session object with the required properties
+  const emptySession: Session = {
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 1 day from now
+    user: { 
+      id: "placeholder-id",
+      name: null, 
+      email: null, 
+      image: null 
+    }
+  };
+
   return (
-    <SessionProvider session={null}>
+    <SessionProvider session={emptySession}>
       <ChatLimitProvider>
         <AppContent>
           {children}

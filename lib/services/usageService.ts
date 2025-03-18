@@ -1,7 +1,7 @@
 import { prisma } from '../prisma';
 import { UsageType } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../app/api/auth/[...nextauth]/route';
+import { authOptions } from '../auth';
 
 // Default limits for free users
 const FREE_TIER_LIMITS: Record<UsageType, number> = {

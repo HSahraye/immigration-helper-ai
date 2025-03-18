@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST /api/documents - Create a new document
+// POST /api/documents - Create a new document or analyze a document
 export async function POST(req: NextRequest) {
   try {
     const session = await getAuthSession();
@@ -29,6 +29,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
+    // Check URL to determine if this is an analysis request
+    const { pathname } = new URL(req.url);
+    if (pathname.endsWith('/analyze')) {
+      return handleDocumentAnalysis(req, session);
+    }
+    
+    // This is a regular document creation request
     // Check subscription status for document generation
     const subscriptionStatus = await usageService.checkSubscriptionStatus(session.user.id);
     
@@ -75,19 +82,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// POST /api/documents/analyze - Analyze a document
-export async function POST(req: NextRequest, { params }: { params: { analyze: string } }) {
-  if (params.analyze !== 'analyze') {
-    return NextResponse.json({ error: 'Route not found' }, { status: 404 });
-  }
-  
+// Helper function for document analysis
+async function handleDocumentAnalysis(req: NextRequest, session: any) {
   try {
-    const session = await getAuthSession();
-    
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
     // Check subscription status for document analysis
     const subscriptionStatus = await usageService.checkSubscriptionStatus(session.user.id);
     

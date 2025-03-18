@@ -5,6 +5,8 @@
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
+  # Provide dummy key for build time to prevent errors - will be overridden by real key in Netlify environment variables
+  OPENAI_API_KEY = "sk_dummy_key_for_netlify_build_only_will_be_replaced_in_production"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

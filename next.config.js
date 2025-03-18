@@ -28,6 +28,10 @@ const nextConfig = {
   },
   // Disable static exports to avoid SessionProvider issues
   output: 'standalone',
+  // Skip API routes during static generation build to prevent OpenAI errors
+  skipAPIRoutes: true,
+  // Disable preflight checks for production build
+  productionBrowserSourceMaps: false,
 }
 
 module.exports = nextConfig 

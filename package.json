@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "vercel-build": "npm run build:scripts && next build",
-    "netlify-build": "prisma generate && next build",
+    "netlify-build": "npx prisma generate && next build",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",

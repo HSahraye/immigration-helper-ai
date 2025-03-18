@@ -13,10 +13,14 @@ const nextConfig = {
       },
     ],
   },
-  // Enhanced experimental settings to fix React and SSG issues
+  // Disable automatic static optimization to prevent React hooks errors
+  // This makes all pages server-side rendered at runtime instead of build time
   experimental: {
-    instrumentationHook: false,
-    // Remove next-auth from serverComponentsExternalPackages to avoid conflict with transpilePackages
+    // Disable static page generation
+    disableStaticGeneration: true,
+    // Disable optimization for server components
+    serverActions: true,
+    // These packages should be treated as external during server component rendering
     serverComponentsExternalPackages: ['react', 'react-dom'],
     optimizePackageImports: ['next-auth', 'lucide-react'],
   },

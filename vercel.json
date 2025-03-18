@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npm run vercel-build",
+  "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
@@ -10,5 +10,16 @@
   "trailingSlash": false,
   "github": {
     "silent": true
+  },
+  "buildEnvironment": {
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NODE_ENV": "production",
+    "NEXT_PRIVATE_STANDALONE": "1",
+    "NEXT_SKIP_AFTER_PAGES_MANIFEST": "1",
+    "NEXT_SKIP_AFTER_APP_MANIFEST": "1",
+    "NEXT_SKIP_AFTER_BUILD_MANIFEST": "1"
+  },
+  "env": {
+    "OPENAI_API_KEY": "sk_dummy_key_for_build_only"
   }
 } 

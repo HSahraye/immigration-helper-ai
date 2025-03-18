@@ -16,12 +16,13 @@ const nextConfig = {
   // Disable automatic static optimization to prevent React hooks errors
   // This makes all pages server-side rendered at runtime instead of build time
   experimental: {
-    // Disable static page generation
+    // Completely disable static generation to prevent React hook errors
     disableStaticGeneration: true,
-    // Disable optimization for server components
+    // Enable server actions for proper data mutations
     serverActions: true,
-    // These packages should be treated as external during server component rendering
+    // Configure server component externalization
     serverComponentsExternalPackages: ['react', 'react-dom'],
+    // Optimize imports for performance
     optimizePackageImports: ['next-auth', 'lucide-react'],
   },
   // Explicitly define transpilePackages to include next-auth
@@ -43,7 +44,7 @@ const nextConfig = {
     styledComponents: true
   },
   webpack: (config, { isServer }) => {
-    // Fix for static page generation with React hooks
+    // Client-side polyfills
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,

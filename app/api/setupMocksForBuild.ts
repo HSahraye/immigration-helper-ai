@@ -8,12 +8,18 @@ export const isBuildTime = () => {
   return (
     process.env.NODE_ENV === 'production' && 
     typeof window === 'undefined' && 
-    !process.env.NETLIFY
+    (process.env.VERCEL || process.env.NETLIFY)
   );
 };
 
 // Create a mock session for build time
 export const getMockSession = () => {
+  // Make sure this is safe to be used during server-side rendering
+  // Return null if we're in a client environment to prevent React errors
+  if (typeof window !== 'undefined') {
+    return null;
+  }
+  
   return {
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     user: {

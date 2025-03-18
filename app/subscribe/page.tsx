@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useSession, signIn } from 'next-auth/react';
 import { CheckCircle2 } from 'lucide-react';
 
-export default function SubscribePage() {
+// Client-side only component wrapper
+import dynamic from 'next/dynamic';
+
+const ClientOnlySubscribePage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -187,4 +190,11 @@ export default function SubscribePage() {
       </div>
     </div>
   );
-} 
+}
+
+// Use dynamic import with ssr: false to prevent server-side rendering
+const SubscribePage = dynamic(() => Promise.resolve(ClientOnlySubscribePage), {
+  ssr: false,
+});
+
+export default SubscribePage; 

@@ -44,13 +44,25 @@ const SafeHydrate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
+// Create a conditional session initializer that's safe for both client and server
+const getInitialSession = (): Session | null => {
+  // Use typeof to check for window - this is safe in both client and server contexts
+  if (typeof window === 'undefined') {
+    // Server-side - use a mock session or null
+    return null;
+  }
+  
+  // Client-side - it's safe to return null, the actual session will be populated by next-auth
+  return null;
+};
+
 export function Providers({ children }: { children: ReactNode }) {
-  // Create an empty session object with the required properties
-  const emptySession: Session = getMockSession();
+  // Use the safe initializer
+  const initialSession = getInitialSession();
 
   return (
     <SafeHydrate>
-      <SessionProvider session={emptySession}>
+      <SessionProvider session={initialSession}>
         <ChatLimitProvider>
           <AppContent>
             {children}

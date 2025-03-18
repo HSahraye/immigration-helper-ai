@@ -14,7 +14,6 @@ A comprehensive platform providing specialized AI assistance for various immigra
 - [Documentation](#documentation)
 - [Contributing](#contributing)
 - [License](#license)
-- [Latest Deployment Update](#latest-deployment-update)
 
 ## Overview
 
@@ -180,14 +179,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Latest Deployment Update
-
-This project was updated on: 
-- Date: March 19, 2025
-- Features: 
-  - Improved authentication flow
-  - Fixed sign-in redirection
-  - Enhanced subscription handling
-  - Added Netlify configuration for proper deployment 
+This project is licensed under the MIT License - see the LICENSE file for details. 

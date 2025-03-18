@@ -1,12 +1,14 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run vercel-build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "env": {
-    "OPENAI_API_KEY": "@openai-api-key",
-    "NODE_ENV": "production"
+  "regions": ["sfo1"],
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "github": {
+    "silent": true
   }
 } 

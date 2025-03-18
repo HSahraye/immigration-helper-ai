@@ -1,6 +1,7 @@
 [build]
   command = "npm install dotenv && npx prisma generate && npm run netlify-build"
   publish = ".next"
+  node_version = "14"
 
 [build.environment]
   NODE_VERSION = "20.10.0"

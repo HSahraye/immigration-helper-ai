@@ -1,11 +1,11 @@
 'use client';
 
+import { ReactNode, Suspense } from 'react';
 import { SessionProvider } from 'next-auth/react';
 import { ChatLimitProvider } from './contexts/ChatLimitContext';
 import Navigation from './components/Navigation';
-import { ReactNode } from 'react';
 
-// Separate client component for layout
+// Separate client component for content
 function AppContent({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col min-h-screen bg-[#202124] text-gray-200">
@@ -27,21 +27,43 @@ function AppContent({ children }: { children: ReactNode }) {
   );
 }
 
-// Fix for SessionProvider with proper typing
-export function Providers({ 
-  children,
-  session = undefined, // Make session optional with a default value
-}: { 
-  children: ReactNode;
-  session?: any; // Add session prop with proper typing
-}) {
+// Loading state for Suspense
+function LoadingState() {
+  return (
+    <div className="flex flex-col min-h-screen bg-[#202124] text-gray-200">
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    </div>
+  );
+}
+
+// SessionWrapper to handle auth
+function SessionWrapper({ children, session }: { children: ReactNode, session?: any }) {
   return (
     <SessionProvider session={session}>
       <ChatLimitProvider>
+        {children}
+      </ChatLimitProvider>
+    </SessionProvider>
+  );
+}
+
+// Main providers component with Suspense
+export function Providers({ 
+  children,
+  session,
+}: { 
+  children: ReactNode;
+  session?: any;
+}) {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <SessionWrapper session={session}>
         <AppContent>
           {children}
         </AppContent>
-      </ChatLimitProvider>
-    </SessionProvider>
+      </SessionWrapper>
+    </Suspense>
   );
 } 

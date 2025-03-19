@@ -3,6 +3,25 @@ const nextConfig = {
   // Needed for static export
   output: 'export',
   
+  // Disable static generation for API routes
+  trailingSlash: true,
+  
+  // Exclude API routes from static export
+  exportPathMap: async function(
+    defaultPathMap,
+    { dev, dir, outDir, distDir, buildId }
+  ) {
+    // Build a path map that excludes API routes
+    const pathMap = {};
+    Object.keys(defaultPathMap).forEach(path => {
+      // Skip API routes but keep regular pages
+      if (!path.startsWith('/api/')) {
+        pathMap[path] = defaultPathMap[path];
+      }
+    });
+    return pathMap;
+  },
+  
   // DRASTIC MEASURES TO FIX BUILD ERRORS
   reactStrictMode: false, // Disable strict mode
   env: {

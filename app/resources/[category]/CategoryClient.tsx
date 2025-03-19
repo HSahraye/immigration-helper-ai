@@ -1,9 +1,13 @@
 import React from 'react';
 
-const CategoryClient = () => {
+interface CategoryClientProps {
+  category: string;
+}
+
+const CategoryClient: React.FC<CategoryClientProps> = ({ category }) => {
   return (
     <div>
-      <h1>Category Client</h1>
+      <h1>Category: {category}</h1>
       <p>This is a placeholder component for CategoryClient.</p>
     </div>
   );

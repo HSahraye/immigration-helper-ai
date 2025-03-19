@@ -57,6 +57,12 @@ const nextConfig = {
     // Make sure TypeScript doesn't cause issues
     config.resolve.extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
     
+    // Fix @ path aliases
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': require('path').resolve(__dirname),
+    };
+    
     return config;
   }
 }

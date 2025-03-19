@@ -19,11 +19,9 @@
   # Set build environment
   NODE_ENV = "production"
 
-# Use double brackets for plugins array
+# Just include the plugin without any inputs
 [[plugins]]
 package = "@netlify/plugin-nextjs"
-  [plugins.inputs]
-  includeFiles = "dist/**"
 
 [functions]
   directory = "netlify/functions"

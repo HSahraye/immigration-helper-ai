@@ -85,4 +85,19 @@ const nextConfig = {
   }
 }
 
-module.exports = nextConfig 
+// Exclude auth routes from static export
+const excludeAuthRoutes = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/auth/:path*',
+        destination: '/api/auth/:path*',
+      },
+    ]
+  },
+}
+
+module.exports = {
+  ...nextConfig,
+  ...excludeAuthRoutes,
+} 

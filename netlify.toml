@@ -1,34 +1,30 @@
 [build]
-  command = "npm ci && npm run netlify-build"
-  publish = "dist"
+  command = "npm ci && npm run build"
+  publish = ".next"
   node_version = "20.10.0"
 
 [build.environment]
   NODE_VERSION = "20.10.0"
-  NPM_FLAGS = "--legacy-peer-deps"
-  # Static export mode
-  NEXT_STATIC_EXPORT = "true"
-  # Disable TypeScript checks
-  NEXT_SKIP_TYPE_CHECK = "1"
-  NEXT_SKIP_LINT = "1"
+  NODE_ENV = "production"
+  NPM_FLAGS = "--no-audit --no-fund"
+  NEXT_SKIP_TYPE_CHECK = "true"
+  NEXT_SKIP_LINT = "true"
   NEXT_TELEMETRY_DISABLED = "1"
+  NODE_OPTIONS = "--max-old-space-size=4096"
   # Dummy key for build time
   OPENAI_API_KEY = "sk_dummy_key_for_netlify_build_only"
-  # Increase Node.js memory
-  NODE_OPTIONS = "--max_old_space_size=4096"
-  # Set build environment
-  NODE_ENV = "production"
 
-# Explicitly override any plugins from UI
-# This must be the only plugin to avoid conflicts
-[plugins]
 [[plugins]]
-  package = "@netlify/plugin-local-install-core"
-
-# Tell Netlify we don't need the Next.js plugin
-[build.processing]
-  skip_processing = true
+  package = "@netlify/plugin-nextjs"
 
 [functions]
   directory = "netlify/functions"
-  node_bundler = "esbuild" 
+  node_bundler = "esbuild"
+
+[functionsDirectory]
+  "*" = "netlify/functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200 

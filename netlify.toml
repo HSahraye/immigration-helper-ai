@@ -1,5 +1,5 @@
 [build]
-  command = "npm ci && npm install --save-dev @types/react@18.2.43 && npx prisma generate && npm run build"
+  command = "npm ci && npm install --save-dev @types/react@18.2.43 @types/react-dom@18.2.17 && npx prisma generate && npm run build"
   publish = ".next"
   node_version = "20.10.0"
 
@@ -22,6 +22,8 @@
   NODE_OPTIONS = "--max_old_space_size=4096"
   # Disable static generation of API routes
   NEXT_PRIVATE_STANDALONE = "1"
+  # Force React versions to match
+  SKIP_INSTALL_DEPS = "false"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

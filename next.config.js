@@ -18,8 +18,8 @@ const nextConfig = {
     // Removed invalid options
     serverComponentsExternalPackages: ['react', 'react-dom', 'next-auth'],
   },
-  // Transpile everything
-  transpilePackages: ['next-auth', 'react', 'react-dom'],
+  // Only transpile packages that are not in serverComponentsExternalPackages
+  transpilePackages: [],
   // Disable type checking completely
   typescript: {
     ignoreBuildErrors: true,

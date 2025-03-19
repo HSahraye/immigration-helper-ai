@@ -11,9 +11,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder'
 export const runtime = 'edge';
 
 export async function POST(req: NextRequest) {
-  // Skip processing during build time
-  if (process.env.NODE_ENV === 'production' && !process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json({ message: 'Webhook endpoint is not available during build' });
+  // Skip processing during build time or when required env vars are missing
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ 
+      message: 'Webhook endpoint is not available - missing required environment variables' 
+    });
   }
 
   const body = await req.text();
@@ -26,7 +28,7 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET || ''
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err: any) {
     console.error(`Webhook signature verification failed: ${err.message}`);

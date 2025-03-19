@@ -6,11 +6,15 @@ import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  });
+// Skip Prisma initialization during build time
+const isBuildTime = process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL;
+
+export const prisma = isBuildTime
+  ? {} as PrismaClient
+  : globalForPrisma.prisma ||
+    new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 

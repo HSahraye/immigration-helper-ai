@@ -49,6 +49,14 @@ const categoryDescriptions = {
   'legal-assistance': 'Access legal resources and immigration lawyer information',
 };
 
+// Add this function for static exports
+export function generateStaticParams() {
+  // Generate pages for all valid categories
+  return Object.keys(categoryTitles).map(category => ({
+    category,
+  }));
+}
+
 export default function CategoryPage({ params }: { params: { category: string } }) {
   const icon = categoryIcons[params.category as keyof typeof categoryIcons];
   const color = categoryColors[params.category as keyof typeof categoryColors];

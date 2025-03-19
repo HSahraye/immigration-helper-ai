@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable static exports
-  output: 'export',
+  // Configure for server-side rendering
   trailingSlash: true,
   
   // Set the output directory
@@ -17,7 +16,6 @@ const nextConfig = {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
   images: {
-    unoptimized: true, // Required for static export
     domains: ['openai.com'],
     remotePatterns: [
       {

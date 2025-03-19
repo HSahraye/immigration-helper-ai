@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import { authOptions } from '@/lib/auth';
-import { generateStaticParams } from '../../route-config';
+import { generateStaticParams } from './config';
 
 const handler = NextAuth(authOptions);
 

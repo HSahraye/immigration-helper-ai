@@ -1,10 +1,7 @@
 import { getServerSession, type NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from './prisma';
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -49,16 +46,6 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
-  },
-  events: {
-    createUser: async ({ user }) => {
-      // Create default user settings when a new user signs up
-      await prisma.userSettings.create({
-        data: {
-          userId: user.id,
-        },
-      });
-    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

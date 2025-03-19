@@ -32,7 +32,6 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose', // Needed for proper TypeScript resolution
     serverComponentsExternalPackages: ['react', 'react-dom', 'next-auth'],
-    // Remove invalid experimental options
   },
   // Only transpile packages that are not in serverComponentsExternalPackages
   transpilePackages: [],

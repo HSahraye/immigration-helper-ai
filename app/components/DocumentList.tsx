@@ -52,7 +52,11 @@ export default function DocumentList() {
         try {
           setIsLoading(true);
           const docs = await getUserDocuments(session.user.id);
-          setDocuments(docs);
+          setDocuments(docs.map(doc => ({
+            ...doc,
+            createdAt: doc.createdAt.toString(),
+            updatedAt: doc.updatedAt.toString(),
+          })));
         } catch (err) {
           console.error('Error fetching documents:', err);
           setError('Failed to load documents. Please try again later.');

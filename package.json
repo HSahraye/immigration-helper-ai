@@ -38,6 +38,7 @@
     "clsx": "^2.1.1",
     "crypto-browserify": "^3.12.1",
     "dotenv": "^16.4.7",
+    "encoding": "^0.1.13",
     "glob": "^10.3.10",
     "jsdom": "^22.1.0",
     "lucide-react": "^0.300.0",

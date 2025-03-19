@@ -32,10 +32,7 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose', // Needed for proper TypeScript resolution
     serverComponentsExternalPackages: ['react', 'react-dom', 'next-auth'],
-    // Add setting to ignore route errors for static export
-    appDir: true,
-    // Critical setting for static exports - don't error on API routes
-    allowLinkingToExternalPrefetches: true
+    // Remove invalid experimental options
   },
   // Only transpile packages that are not in serverComponentsExternalPackages
   transpilePackages: [],

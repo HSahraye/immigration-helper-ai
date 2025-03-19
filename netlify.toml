@@ -19,9 +19,15 @@
   # Set build environment
   NODE_ENV = "production"
 
-# Explicitly disable all plugins including those from the UI
+# Explicitly override any plugins from UI
+# This must be the only plugin to avoid conflicts
+[plugins]
 [[plugins]]
   package = "@netlify/plugin-local-install-core"
+
+# Tell Netlify we don't need the Next.js plugin
+[build.processing]
+  skip_processing = true
 
 [functions]
   directory = "netlify/functions"

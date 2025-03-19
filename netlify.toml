@@ -19,9 +19,7 @@
   # Set build environment
   NODE_ENV = "production"
 
-# Just include the plugin without any inputs
-[[plugins]]
-package = "@netlify/plugin-nextjs"
+# Remove the Next.js plugin since we're using static export
 
 [functions]
   directory = "netlify/functions"

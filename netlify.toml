@@ -7,8 +7,6 @@
   NODE_VERSION = "20.10.0"
   NODE_ENV = "production"
   NPM_FLAGS = "--no-audit --no-fund"
-  NEXT_SKIP_TYPE_CHECK = "true"
-  NEXT_SKIP_LINT = "true"
   NEXT_TELEMETRY_DISABLED = "1"
   NODE_OPTIONS = "--max-old-space-size=4096"
   # Dummy keys for build time

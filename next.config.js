@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Configure for static generation
-  output: 'export',
+  // Configure for server-side rendering
+  reactStrictMode: true,
   
   // Set the output directory
   distDir: '.next',
@@ -11,9 +11,7 @@ const nextConfig = {
   skipMiddlewareUrlNormalize: true,
   
   // Basic configuration
-  reactStrictMode: true,
   images: {
-    unoptimized: true,
     domains: ['openai.com'],
     remotePatterns: [
       {

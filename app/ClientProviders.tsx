@@ -13,6 +13,14 @@ export default function ClientProviders({
 }: { 
   children: ReactNode;
 }) {
+  // Check if we're in a browser environment
+  const isBrowser = typeof window !== 'undefined';
+  
+  if (!isBrowser) {
+    // During static generation, render children without providers
+    return <>{children}</>;
+  }
+
   return (
     <SessionProvider>
       <ChatLimitProvider>

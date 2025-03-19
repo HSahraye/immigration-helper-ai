@@ -15,12 +15,8 @@ const nextConfig = {
     ],
   },
   experimental: {
-    // SLEDGEHAMMER APPROACH: 
-    appDir: false, // Abandon App Router completely
-    // Disable all static generation
-    disableStaticGeneration: true,
-    staticPrerenderingBailout: true,
-    serverComponentsExternalPackages: [],
+    // Removed invalid options
+    serverComponentsExternalPackages: ['react', 'react-dom', 'next-auth'],
   },
   // Transpile everything
   transpilePackages: ['next-auth', 'react', 'react-dom'],
@@ -32,7 +28,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  swcMinify: false, // Disable SWC minification
+  swcMinify: true, // Enable SWC minification
   // Output as standalone
   output: 'standalone',
   // Disable source maps
@@ -50,8 +46,8 @@ const nextConfig = {
         tls: false,
       };
     }
-    // Disable optimization
-    config.optimization.minimize = false;
+    // Enable optimization
+    config.optimization.minimize = true;
     return config;
   }
 }

@@ -1,16 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Needed for static export
+  // Enable static exports
   output: 'export',
-  
-  // Disable static generation for API routes
   trailingSlash: true,
   
-  // Set the output directory for the static export
+  // Set the output directory
   distDir: '.next',
   
   // Configure routes for App Router project
-  // Skip the entire API route directory for static export
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
   
@@ -85,19 +82,4 @@ const nextConfig = {
   }
 }
 
-// Exclude auth routes from static export
-const excludeAuthRoutes = {
-  async rewrites() {
-    return [
-      {
-        source: '/api/auth/:path*',
-        destination: '/api/auth/:path*',
-      },
-    ]
-  },
-}
-
-module.exports = {
-  ...nextConfig,
-  ...excludeAuthRoutes,
-} 
+module.exports = nextConfig 

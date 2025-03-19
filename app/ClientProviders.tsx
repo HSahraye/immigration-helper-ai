@@ -1,7 +1,7 @@
 'use client';
 
 import { SessionProvider } from 'next-auth/react';
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import { ChatLimitProvider } from './contexts/ChatLimitContext';
 
 /**
@@ -9,6 +9,20 @@ import { ChatLimitProvider } from './contexts/ChatLimitContext';
  * This is the proper pattern for provider architecture in Next.js App Router
  */
 export default function ClientProviders({ 
+  children,
+}: { 
+  children: ReactNode;
+}) {
+  return (
+    <Suspense fallback={<>{children}</>}>
+      <ClientProvidersInner>
+        {children}
+      </ClientProvidersInner>
+    </Suspense>
+  );
+}
+
+function ClientProvidersInner({ 
   children,
 }: { 
   children: ReactNode;

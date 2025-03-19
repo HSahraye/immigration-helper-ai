@@ -34,6 +34,8 @@ interface Document {
   status: DocumentStatus;
   createdAt: string;
   updatedAt: string;
+  userId: string;
+  metadata?: any;
 }
 
 interface DocumentDetailsProps {
@@ -56,7 +58,12 @@ export default function DocumentDetails({ documentId }: DocumentDetailsProps) {
       try {
         setIsLoading(true);
         const doc = await getDocument(documentId, session.user.id);
-        setDocument(doc);
+        // Convert Date objects to ISO strings
+        setDocument({
+          ...doc,
+          createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : doc.createdAt,
+          updatedAt: doc.updatedAt instanceof Date ? doc.updatedAt.toISOString() : doc.updatedAt,
+        });
       } catch (err) {
         console.error('Error fetching document:', err);
         setError('Failed to load document. Please try again.');
@@ -95,7 +102,12 @@ export default function DocumentDetails({ documentId }: DocumentDetailsProps) {
 
     try {
       const updatedDoc = await updateDocument(document.id, session.user.id, { status });
-      setDocument(prev => prev ? { ...prev, status } : null);
+      // Convert Date objects to ISO strings
+      setDocument(prev => prev ? {
+        ...prev,
+        status,
+        updatedAt: updatedDoc.updatedAt instanceof Date ? updatedDoc.updatedAt.toISOString() : updatedDoc.updatedAt,
+      } : null);
     } catch (err) {
       console.error('Error updating document status:', err);
       setError('Failed to update document status');
@@ -105,13 +117,13 @@ export default function DocumentDetails({ documentId }: DocumentDetailsProps) {
   const downloadDocument = () => {
     if (!document) return;
     
-    const element = document.createElement('a');
+    const element = window.document.createElement('a');
     const file = new Blob([document.content], { type: 'text/markdown' });
     element.href = URL.createObjectURL(file);
     element.download = `${document.title.replace(/\s+/g, '_')}.md`;
-    document.body.appendChild(element);
+    window.document.body.appendChild(element);
     element.click();
-    document.body.removeChild(element);
+    window.document.body.removeChild(element);
   };
 
   // Document type display names

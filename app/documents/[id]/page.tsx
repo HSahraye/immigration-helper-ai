@@ -7,11 +7,15 @@ import { Badge } from '@/components/ui/badge';
 import { AlertCircle, FileDown, PenSquare } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
+import { generateStaticParams } from '@/app/route-config';
 
 export const metadata: Metadata = {
   title: 'Document Details | Immigration Helper AI',
   description: 'View and manage your immigration document.',
 };
+
+// Export generateStaticParams for static generation
+export { generateStaticParams };
 
 export default async function DocumentDetailsPage({
   params,

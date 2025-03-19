@@ -9,11 +9,15 @@ import { Label } from '@/components/ui/label';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
+import { generateStaticParams } from '@/app/route-config';
 
 export const metadata: Metadata = {
   title: 'Edit Document | Immigration Helper AI',
   description: 'Edit your immigration document.',
 };
+
+// Export generateStaticParams for static generation
+export { generateStaticParams };
 
 export default async function EditDocumentPage({
   params,

@@ -5,83 +5,58 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Check, ArrowRight } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 export default function CheckoutSuccessPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const session = useSession();
   const [countdown, setCountdown] = useState(5);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Redirect to profile after countdown if authenticated
   useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin?callbackUrl=/profile');
+    if (session.status === 'loading') {
       return;
     }
-    
-    if (status === 'authenticated') {
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            router.push('/profile');
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      
-      return () => clearInterval(timer);
+
+    if (session.status === 'unauthenticated') {
+      redirect('/auth/signin');
     }
-  }, [status, router]);
+
+    setIsLoading(false);
+  }, [session.status]);
   
-  if (status === 'loading' || status === 'unauthenticated') {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
-        <div className="flex items-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mr-2"></div>
-          <span className="text-xl">Loading...</span>
-        </div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-[#303134] rounded-xl shadow-lg border border-gray-700 p-8 text-center">
-        <div className="flex justify-center mb-6">
-          <div className="h-20 w-20 bg-green-500/20 rounded-full flex items-center justify-center">
-            <Check className="h-10 w-10 text-green-500" />
+    <div className="min-h-screen bg-[#1a1a1a] text-white py-12">
+      <div className="max-w-4xl mx-auto px-4 text-center">
+        <div className="bg-[#282830] rounded-lg p-8 mb-8">
+          <h1 className="text-3xl font-bold mb-4">Thank You!</h1>
+          <p className="text-gray-300 mb-6">
+            Your payment was successful and your subscription is now active.
+          </p>
+          <div className="space-y-4">
+            <Link
+              href="/profile"
+              className="block w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-medium transition-colors"
+            >
+              View Your Profile
+            </Link>
+            <Link
+              href="/"
+              className="block w-full bg-[#383840] hover:bg-[#45454d] py-3 rounded-lg font-medium transition-colors"
+            >
+              Return to Home
+            </Link>
           </div>
         </div>
-        
-        <h1 className="text-2xl font-bold mb-4">Payment Successful!</h1>
-        
-        <p className="text-gray-400 mb-8">
-          Thank you for subscribing to Immigration Helper AI. Your account has been successfully upgraded, and you now have access to all premium features.
-        </p>
-        
-        <div className="space-y-4">
-          <Link
-            href="/profile"
-            className="block w-full py-3 bg-blue-600 hover:bg-blue-700 text-center rounded-lg font-medium transition-colors"
-          >
-            Go to Profile
-          </Link>
-          
-          <Link
-            href="/resources"
-            className="flex items-center justify-center space-x-2 w-full py-3 bg-[#444448] hover:bg-[#505055] text-center rounded-lg font-medium transition-colors"
-          >
-            <span>Explore Resources</span>
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-        
-        <p className="text-sm text-gray-400 mt-6">
-          Redirecting to profile in {countdown} seconds...
-        </p>
       </div>
     </div>
   );

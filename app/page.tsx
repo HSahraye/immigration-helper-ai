@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
 export default function HomePage() {
-  const { data: session } = useSession();
+  const session = useSession();
+  const isAuthenticated = session.status === 'authenticated';
 
   return (
     <div className="min-h-screen bg-[#202124] text-gray-200">
@@ -23,7 +24,7 @@ export default function HomePage() {
                 className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-medium text-center transition-colors">
             Start Chatting Now
           </Link>
-          {!session && (
+          {!isAuthenticated && (
             <Link href="/auth/signin" 
                   className="px-8 py-3 bg-gray-700 hover:bg-gray-600 rounded-full font-medium text-center transition-colors">
               Sign In

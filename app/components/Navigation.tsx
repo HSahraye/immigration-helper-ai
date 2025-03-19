@@ -7,7 +7,8 @@ import { Menu, X, User } from 'lucide-react';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session } = useSession();
+  const session = useSession();
+  const isAuthenticated = session.status === 'authenticated';
 
   return (
     <nav className="bg-[#202124] text-gray-200 sticky top-0 z-50 shadow-md">
@@ -27,7 +28,7 @@ export default function Navigation() {
               <Link href="/resources" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
                 Services
               </Link>
-              {session && (
+              {isAuthenticated && (
                 <>
                   <Link href="/chat" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
                     Chat
@@ -37,7 +38,7 @@ export default function Navigation() {
                   </Link>
                 </>
               )}
-              {session ? (
+              {isAuthenticated ? (
                 <Link href="/profile" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
                   My Account
                 </Link>
@@ -51,7 +52,7 @@ export default function Navigation() {
           
           <div className="md:hidden flex items-center">
             {/* Profile button (visible even when menu is closed) */}
-            {session ? (
+            {isAuthenticated ? (
               <Link href="/profile" className="p-1 mr-3">
                 <User className="h-6 w-6" />
               </Link>
@@ -90,7 +91,7 @@ export default function Navigation() {
             >
               Services
             </Link>
-            {!session && (
+            {!isAuthenticated && (
               <Link
                 href="/auth/signin"
                 className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-blue-400"
@@ -99,7 +100,7 @@ export default function Navigation() {
                 Sign In
               </Link>
             )}
-            {session && (
+            {isAuthenticated && (
               <>
                 <Link
                   href="/chat"

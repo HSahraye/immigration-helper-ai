@@ -5,9 +5,12 @@ import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { User, CreditCard, MessageSquare, FileText, Settings, LogOut } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession();
+  const session = useSession();
+  const isAuthenticated = session.status === 'authenticated';
+  const isLoading = session.status === 'loading';
   const router = useRouter();
   const searchParams = useSearchParams();
   const [subscription, setSubscription] = useState<string | null>(null);
@@ -24,10 +27,10 @@ export default function ProfilePage() {
 
   // Redirect if not authenticated
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (session.status === 'unauthenticated') {
       router.push('/auth/signin');
     }
-  }, [status, router]);
+  }, [session.status, router]);
 
   // Get subscription from localStorage (in production, this would come from your API/database)
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function ProfilePage() {
     }
   }, []);
 
-  if (status === 'loading') {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
         <div className="animate-pulse">Loading...</div>
@@ -48,12 +51,8 @@ export default function ProfilePage() {
     );
   }
 
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
-        <div className="animate-pulse">Redirecting to login...</div>
-      </div>
-    );
+  if (!isAuthenticated) {
+    redirect('/auth/signin');
   }
 
   // Format subscription info
@@ -175,19 +174,19 @@ export default function ProfilePage() {
                   {/* User Profile */}
                   <div className="flex items-center gap-4 mb-8">
                     <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold overflow-hidden">
-                      {session.user?.image ? (
+                      {session.data?.user?.image ? (
                         <img 
-                          src={session.user.image} 
-                          alt={session.user.name || 'User'} 
+                          src={session.data.user.image} 
+                          alt={session.data.user.name || 'User'} 
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        session.user?.name?.charAt(0) || 'U'
+                        session.data?.user?.name?.charAt(0) || 'U'
                       )}
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold">{session.user?.name || 'User'}</h3>
-                      <p className="text-gray-400">{session.user?.email}</p>
+                      <h3 className="text-xl font-semibold">{session.data?.user?.name || 'User'}</h3>
+                      <p className="text-gray-400">{session.data?.user?.email}</p>
                     </div>
                   </div>
                   
@@ -197,11 +196,11 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <div className="grid grid-cols-[120px_1fr] gap-2">
                         <span className="text-gray-400">Name:</span>
-                        <span>{session.user?.name || 'Not provided'}</span>
+                        <span>{session.data?.user?.name || 'Not provided'}</span>
                       </div>
                       <div className="grid grid-cols-[120px_1fr] gap-2">
                         <span className="text-gray-400">Email:</span>
-                        <span>{session.user?.email}</span>
+                        <span>{session.data?.user?.email}</span>
                       </div>
                       <div className="grid grid-cols-[120px_1fr] gap-2">
                         <span className="text-gray-400">Member Since:</span>
@@ -338,56 +337,20 @@ export default function ProfilePage() {
                 {subscription ? (
                   <div className="space-y-4">
                     {/* Sample conversation history - in a real app, this would come from your database */}
-                    <div className="bg-[#282830] p-4 rounded-lg hover:bg-[#2a2a33] transition-colors cursor-pointer">
-                      <div className="flex justify-between mb-2">
-                        <h3 className="font-medium">Student Visa Application</h3>
-                        <span className="text-sm text-gray-400">Today</span>
+                    <div className="bg-[#303134] p-4 rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-medium">Visa Application Discussion</h3>
+                        <span className="text-sm text-gray-400">2 days ago</span>
                       </div>
-                      <p className="text-gray-400 text-sm truncate">I need help with my F-1 student visa application for...</p>
+                      <p className="text-gray-400 text-sm">Last message: Thanks for helping me understand the process...</p>
                     </div>
-                    
-                    <div className="bg-[#282830] p-4 rounded-lg hover:bg-[#2a2a33] transition-colors cursor-pointer">
-                      <div className="flex justify-between mb-2">
-                        <h3 className="font-medium">H-1B Work Visa Requirements</h3>
-                        <span className="text-sm text-gray-400">Yesterday</span>
-                      </div>
-                      <p className="text-gray-400 text-sm truncate">What are the requirements for an H-1B visa renewal?</p>
-                    </div>
-                    
-                    <div className="bg-[#282830] p-4 rounded-lg hover:bg-[#2a2a33] transition-colors cursor-pointer">
-                      <div className="flex justify-between mb-2">
-                        <h3 className="font-medium">Green Card Process</h3>
-                        <span className="text-sm text-gray-400">3 days ago</span>
-                      </div>
-                      <p className="text-gray-400 text-sm truncate">I'm applying for a Green Card through marriage...</p>
-                    </div>
-                    
-                    <div className="bg-[#282830] p-4 rounded-lg hover:bg-[#2a2a33] transition-colors cursor-pointer">
-                      <div className="flex justify-between mb-2">
-                        <h3 className="font-medium">Document Analysis</h3>
-                        <span className="text-sm text-gray-400">Last week</span>
-                      </div>
-                      <p className="text-gray-400 text-sm truncate">I uploaded my I-20 form for analysis...</p>
-                    </div>
-                    
-                    <Link 
-                      href="/resources" 
-                      className="block w-full text-center py-3 bg-[#383840] hover:bg-[#45454d] rounded-lg transition-colors"
-                    >
-                      Start New Conversation
-                    </Link>
+                    {/* Add more conversation items as needed */}
                   </div>
                 ) : (
-                  <div className="bg-[#282830] p-6 rounded-lg text-center">
-                    <h3 className="text-lg font-semibold mb-2">Conversation History Not Available</h3>
-                    <p className="text-gray-400 mb-6">
-                      Upgrade to a paid plan to save and access your conversation history.
-                    </p>
-                    <Link
-                      href="/subscribe"
-                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg inline-block font-medium transition-colors"
-                    >
-                      Upgrade Now
+                  <div className="text-center py-8">
+                    <p className="text-gray-400 mb-4">Subscribe to access your conversation history</p>
+                    <Link href="/subscribe" className="text-blue-400 hover:text-blue-300">
+                      View Plans
                     </Link>
                   </div>
                 )}
@@ -402,78 +365,17 @@ export default function ProfilePage() {
                 {subscription ? (
                   <div className="space-y-6">
                     <div className="flex justify-between mb-4">
-                      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        <span>Upload Document</span>
-                      </button>
-                      
-                      <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-[#383840] hover:bg-[#45454d] rounded-lg transition-colors">
-                          Recent
-                        </button>
-                        <button className="px-4 py-2 bg-[#383840] hover:bg-[#45454d] rounded-lg transition-colors">
-                          All
-                        </button>
-                      </div>
+                      <Link href="/documents/new" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                        Create New Document
+                      </Link>
                     </div>
-                    
-                    <div className="bg-[#282830] rounded-lg overflow-hidden">
-                      <div className="p-4 border-b border-gray-700 flex justify-between items-center text-sm text-gray-400 font-medium">
-                        <span className="w-1/2">Name</span>
-                        <span className="w-1/4">Type</span>
-                        <span className="w-1/4">Date</span>
-                      </div>
-                      
-                      <div className="divide-y divide-gray-700">
-                        <div className="p-4 flex justify-between items-center hover:bg-[#2a2a33] transition-colors cursor-pointer">
-                          <div className="w-1/2 flex items-center gap-3">
-                            <FileText className="w-5 h-5 text-blue-400" />
-                            <span className="truncate">I-20_Form.pdf</span>
-                          </div>
-                          <span className="w-1/4 text-gray-400">PDF</span>
-                          <span className="w-1/4 text-gray-400">Today</span>
-                        </div>
-                        
-                        <div className="p-4 flex justify-between items-center hover:bg-[#2a2a33] transition-colors cursor-pointer">
-                          <div className="w-1/2 flex items-center gap-3">
-                            <FileText className="w-5 h-5 text-blue-400" />
-                            <span className="truncate">Passport_Scan.jpg</span>
-                          </div>
-                          <span className="w-1/4 text-gray-400">Image</span>
-                          <span className="w-1/4 text-gray-400">Yesterday</span>
-                        </div>
-                        
-                        <div className="p-4 flex justify-between items-center hover:bg-[#2a2a33] transition-colors cursor-pointer">
-                          <div className="w-1/2 flex items-center gap-3">
-                            <FileText className="w-5 h-5 text-blue-400" />
-                            <span className="truncate">Employment_Letter.docx</span>
-                          </div>
-                          <span className="w-1/4 text-gray-400">Document</span>
-                          <span className="w-1/4 text-gray-400">Last week</span>
-                        </div>
-                        
-                        <div className="p-4 flex justify-between items-center hover:bg-[#2a2a33] transition-colors cursor-pointer">
-                          <div className="w-1/2 flex items-center gap-3">
-                            <FileText className="w-5 h-5 text-blue-400" />
-                            <span className="truncate">Bank_Statement.pdf</span>
-                          </div>
-                          <span className="w-1/4 text-gray-400">PDF</span>
-                          <span className="w-1/4 text-gray-400">Last month</span>
-                        </div>
-                      </div>
-                    </div>
+                    {/* Document list would go here */}
                   </div>
                 ) : (
-                  <div className="bg-[#282830] p-6 rounded-lg text-center">
-                    <h3 className="text-lg font-semibold mb-2">Document Storage Not Available</h3>
-                    <p className="text-gray-400 mb-6">
-                      Upgrade to a paid plan to store and manage your immigration documents.
-                    </p>
-                    <Link
-                      href="/subscribe"
-                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg inline-block font-medium transition-colors"
-                    >
-                      Upgrade Now
+                  <div className="text-center py-8">
+                    <p className="text-gray-400 mb-4">Subscribe to access document management</p>
+                    <Link href="/subscribe" className="text-blue-400 hover:text-blue-300">
+                      View Plans
                     </Link>
                   </div>
                 )}

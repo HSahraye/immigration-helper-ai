@@ -39,17 +39,20 @@ const nextConfig = {
 
     return config;
   },
-  // API route configuration
-  async rewrites() {
+  // Static export configuration
+  output: 'export',
+  // Skip API routes during static export
+  skipApiRoutes: true,
+  // Configure redirects for static export
+  async redirects() {
     return [
       {
         source: '/api/:path*',
         destination: '/api/:path*',
+        permanent: true,
       },
     ];
   },
-  // Skip API routes during static export
-  output: 'standalone',
 }
 
 export default nextConfig 

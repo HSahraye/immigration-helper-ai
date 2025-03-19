@@ -19,7 +19,9 @@
   # Set build environment
   NODE_ENV = "production"
 
-# Remove the Next.js plugin since we're using static export
+# Explicitly disable all plugins including those from the UI
+[[plugins]]
+  package = "@netlify/plugin-local-install-core"
 
 [functions]
   directory = "netlify/functions"

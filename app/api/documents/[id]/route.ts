@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthSession } from '@/lib/auth';
 import { getDocument, updateDocument, deleteDocument } from '@/lib/services/documentService';
+import { generateStaticParams } from '../../route-config';
+
+// Export the generateStaticParams function for static export compatibility
+export { generateStaticParams };
 
 // GET /api/documents/[id] - Get a specific document
 export async function GET(

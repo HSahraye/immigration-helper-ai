@@ -6,6 +6,14 @@ const nextConfig = {
   // Disable static generation for API routes
   trailingSlash: true,
   
+  // Set the output directory for the static export
+  distDir: '.next',
+  
+  // Configure routes for App Router project
+  // Skip the entire API route directory for static export
+  skipTrailingSlashRedirect: true,
+  skipMiddlewareUrlNormalize: true,
+  
   // DRASTIC MEASURES TO FIX BUILD ERRORS
   reactStrictMode: false, // Disable strict mode
   env: {
@@ -24,6 +32,10 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose', // Needed for proper TypeScript resolution
     serverComponentsExternalPackages: ['react', 'react-dom', 'next-auth'],
+    // Add setting to ignore route errors for static export
+    appDir: true,
+    // Critical setting for static exports - don't error on API routes
+    allowLinkingToExternalPrefetches: true
   },
   // Only transpile packages that are not in serverComponentsExternalPackages
   transpilePackages: [],

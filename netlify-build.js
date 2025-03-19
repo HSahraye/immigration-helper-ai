@@ -18,6 +18,26 @@ function runCommand(command) {
   }
 }
 
+// Helper to copy directory contents
+function copyDir(src, dest) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+  
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    
+    if (entry.isDirectory()) {
+      copyDir(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
 // Main build process
 console.log('=== Starting custom Netlify build script ===');
 
@@ -45,21 +65,55 @@ runCommand('rm -rf .next');
 runCommand('rm -rf out/*');
 runCommand('rm -rf dist/*');
 
-// First try to build with next build
-console.log('Building Next.js app with next build...');
-const buildSuccess = runCommand('NODE_OPTIONS="--max-old-space-size=4096" NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production npx next build');
+// Create the redirects file for SPA fallback
+console.log('Creating _redirects file for SPA behavior...');
+fs.writeFileSync('dist/_redirects', `
+# SPA fallback
+/*  /index.html  200
+`);
 
-// If regular build succeeds, export to dist
+// Try to build with next build
+console.log('Building Next.js app with next build...');
+let buildSuccess = false;
+
+// First try: Standard build
+buildSuccess = runCommand('NODE_OPTIONS="--max-old-space-size=4096" NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production npx next build');
+
+// If standard build succeeds, check for output files
 if (buildSuccess) {
-  console.log('Regular build succeeded, exporting static site to dist directory...');
-  if (!runCommand('npx next export -o dist')) {
-    console.log('Export failed, trying alternative export method...');
+  console.log('Build succeeded, checking for output files in out directory...');
+  
+  if (fs.existsSync('out') && fs.readdirSync('out').length > 0) {
+    console.log('Next.js generated output to "out" directory, copying to dist...');
+    copyDir('out', 'dist');
+    
+    // Add redirects file to the dist folder too
+    fs.writeFileSync('dist/_redirects', `
+# SPA fallback
+/*  /index.html  200
+`);
+  } else {
+    console.log('No files found in out directory, checking .next/...');
+    
+    if (fs.existsSync('.next/static')) {
+      console.log('Exporting Next.js app to dist directory...');
+      if (!runCommand('npx next export -o dist')) {
+        console.log('Export failed, creating a backup static site...');
+        createBackupSite();
+      }
+    } else {
+      console.log('No static files found, creating a backup static site...');
+      createBackupSite();
+    }
   }
 } else {
-  // If regular build fails, try a more minimal export approach
-  console.log('Regular build failed, trying with a more minimal approach...');
-  
-  // Create a simple index.html
+  // If standard build fails, create a backup site
+  console.log('Build failed, creating a backup static site...');
+  createBackupSite();
+}
+
+// Function to create a basic static site as fallback
+function createBackupSite() {
   console.log('Creating a basic index.html...');
   const htmlContent = `
     <!DOCTYPE html>

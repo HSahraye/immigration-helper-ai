@@ -3,14 +3,33 @@ import { isBuildTime } from '@/app/api/setupMocksForBuild';
 
 // Check if we're using a mock key
 const isMockKey = (key: string) => {
-  return key === 'sk_test_mock_key_for_development' || key.includes('mock') || key.includes('your-openai');
+  // Check if key is empty or null
+  if (!key || key.trim() === '') {
+    console.log('OpenAI key is empty, using mock client');
+    return true;
+  }
+  
+  // Check for known mock key patterns
+  const isMock = key === 'sk_test_mock_key_for_development' || 
+         key.includes('mock') || 
+         key.includes('your-openai');
+         
+  if (isMock) {
+    console.log('Mock OpenAI key pattern detected:', key.substring(0, 10) + '...');
+  }
+  
+  return isMock;
 };
 
 // Create an OpenAI client with proper error handling
 export function getOpenAIClient() {
   const apiKey = process.env.OPENAI_API_KEY;
+  const isDev = process.env.NODE_ENV === 'development';
+  
+  console.log(`OpenAI client initialization - env: ${process.env.NODE_ENV}, build time: ${isBuildTime()}`);
   
   if (!apiKey) {
+    console.log('OpenAI API key is not defined in environment variables');
     throw new Error('OpenAI API key is not defined in environment variables');
   }
   
@@ -22,11 +41,29 @@ export function getOpenAIClient() {
   
   // If we're using a mock key in development, return the mock client
   if (isMockKey(apiKey)) {
-    console.log('Using mock OpenAI client with mock key:', apiKey);
+    console.log('Using mock OpenAI client with mock key');
     return getMockOpenAIClient();
   }
   
-  // Otherwise return the real client
+  // Log that we're using the real client
+  console.log('Using real OpenAI client with key:', apiKey.substring(0, 10) + '...');
+  
+  // Check if this is a project key format (starting with sk-proj-)
+  if (apiKey.startsWith('sk-proj-')) {
+    console.log('Using project-style API key, configuring client with project authorization');
+    
+    // For project-style keys, we need a special configuration
+    return new OpenAI({
+      apiKey,
+      baseURL: 'https://api.openai.com/v1',
+      defaultHeaders: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+  
+  // Otherwise return the standard client
   return new OpenAI({ apiKey });
 }
 

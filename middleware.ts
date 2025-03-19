@@ -14,7 +14,10 @@ const quotaApiRoutes = [
 const publicPaths = [
   '/documents',
   '/documents/',
-  '/resources'
+  '/resources',
+  '/chat',
+  '/chat/',
+  '/api/chat'
 ];
 
 export async function middleware(request: NextRequest) {

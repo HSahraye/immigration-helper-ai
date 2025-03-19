@@ -13,8 +13,29 @@ export const isBuildTime = () => {
   
   // Check for Next.js build time variables 
   const isNextBuild = process.env.NEXT_PHASE === 'phase-production-build' || 
-                      !!process.env.__NEXT_PROCESSED_ENV ||
-                      process.env.NEXT_RUNTIME === 'nodejs';
+                      process.env.NEXT_RUNTIME === 'edge';
+  
+  // For debugging - this helps us identify why the function is returning true
+  if (isServerSide && (isProduction || isVercel || isNetlify || isNextBuild)) {
+    console.log('Build time detected with flags:', {
+      isProduction,
+      isServerSide,
+      isVercel,
+      isNetlify,
+      isNextBuild,
+      nextPhase: process.env.NEXT_PHASE,
+      nextRuntime: process.env.NEXT_RUNTIME
+    });
+  }
+  
+  // During local development with `npm run dev`, we don't want to use the mock
+  const isLocalDev = process.env.NODE_ENV === 'development';
+  
+  // If we're in local development and server-side (but not doing a build),
+  // we should return false to use the real API
+  if (isLocalDev && isServerSide && !isNextBuild) {
+    return false;
+  }
   
   // Either we're in a known CI environment, or in Next.js build process
   return isServerSide && (isProduction || isVercel || isNetlify || isNextBuild);

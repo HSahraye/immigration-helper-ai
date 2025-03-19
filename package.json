@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "node server.js",
-    "build": "prisma generate && NODE_ENV=production next build",
+    "build": "next build && next export -o dist",
     "vercel-build": "prisma generate && NEXT_DISABLE_PRERENDERING=1 next build",
-    "netlify-build": "NEXT_DISABLE_PRERENDERING=1 DISABLE_SERVER_COMPONENTS=1 npx prisma generate && next build",
+    "netlify-build": "prisma generate && next build && next export -o dist",
     "postinstall": "prisma generate",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",

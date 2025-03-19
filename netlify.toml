@@ -1,31 +1,25 @@
 [build]
-  command = "npm ci && npm install --save-dev typescript@5.3.3 @types/react@18.2.43 @types/react-dom@18.2.17 && npm install --legacy-peer-deps && NEXT_PUBLIC_NETLIFY=true NODE_OPTIONS='--max_old_space_size=4096' NEXT_TELEMETRY_DISABLED=1 SKIP_TYPE_CHECK=1 NODE_ENV=production npx next build"
-  publish = ".next"
+  command = "npm ci && npm install --save-dev typescript@5.3.3 @types/react@18.2.43 @types/react-dom@18.2.17 && npm run netlify-build"
+  publish = "dist"
   node_version = "20.10.0"
 
 [build.environment]
   NODE_VERSION = "20.10.0"
   NPM_FLAGS = "--legacy-peer-deps"
-  # EXTREME MEASURES TO BYPASS NEXTJS STATIC GENERATION
-  NEXT_DISABLE_PRERENDERING = "1"
-  DISABLE_SERVER_COMPONENTS = "1"
+  # Static export mode
+  NEXT_STATIC_EXPORT = "true"
+  # Disable TypeScript checks
   NEXT_SKIP_TYPE_CHECK = "1"
   NEXT_SKIP_LINT = "1"
-  NEXT_SKIP_ERROR_OVERLAY = "1"
-  NEXT_FORCE_CLIENT_SIDE_RENDERING = "1"
-  # Debug environment
-  NODE_ENV = "production"
   NEXT_TELEMETRY_DISABLED = "1"
-  # Provide dummy key for build time to prevent errors - will be overridden by real key in Netlify environment variables
-  OPENAI_API_KEY = "sk_dummy_key_for_netlify_build_only_will_be_replaced_in_production"
-  # Increase Node.js memory limit to avoid memory issues during build
+  # Dummy key for build time
+  OPENAI_API_KEY = "sk_dummy_key_for_netlify_build_only"
+  # Increase Node.js memory
   NODE_OPTIONS = "--max_old_space_size=4096"
-  # Disable static generation of API routes
-  NEXT_PRIVATE_STANDALONE = "1"
-  # Force React versions to match
-  SKIP_INSTALL_DEPS = "false"
-  # Fix Next.js path aliases
-  NEXT_PUBLIC_NETLIFY = "true"
+  # Set build environment
+  NODE_ENV = "production"
+  # Force module resolution
+  NEXT_FORCE_MODULE_RESOLUTION = "true"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

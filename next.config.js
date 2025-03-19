@@ -1,11 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Needed for static export
+  output: 'export',
+  
   // DRASTIC MEASURES TO FIX BUILD ERRORS
   reactStrictMode: false, // Disable strict mode
   env: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
   images: {
+    unoptimized: true, // Required for static export
     domains: ['openai.com'],
     remotePatterns: [
       {
@@ -30,8 +34,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   swcMinify: true, // Enable SWC minification
-  // Output as standalone
-  output: 'standalone',
+  
   // Disable source maps
   productionBrowserSourceMaps: false,
   compiler: {

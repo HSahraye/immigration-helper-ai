@@ -29,12 +29,24 @@
 [functionsDirectory]
   "*" = "netlify/functions"
 
+# Handle static files and Next.js API routes
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/server"
+  from = "/_next/*"
+  to = "/_next/:splat"
   status = 200
 
 [[redirects]]
+  from = "/static/*"
+  to = "/static/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+
+# Handle all other routes
+[[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server"
+  to = "/index.html"
   status = 200 

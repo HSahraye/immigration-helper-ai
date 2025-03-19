@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams, redirect } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function SignInPage() {
+function SignInContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const session = useSession();
@@ -128,5 +128,24 @@ export default function SignInPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
+        <div className="max-w-md w-full p-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-700 rounded w-3/4 mx-auto"></div>
+            <div className="h-4 bg-gray-700 rounded w-1/2 mx-auto"></div>
+            <div className="mt-8 h-12 bg-gray-700 rounded"></div>
+            <div className="h-4 bg-gray-700 rounded w-2/3 mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    }>
+      <SignInContent />
+    </Suspense>
   );
 } 

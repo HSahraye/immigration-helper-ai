@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AlertCircle, ArrowLeft, ExternalLink } from 'lucide-react';
 
-export default function AuthError() {
+function AuthErrorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -101,5 +101,26 @@ export default function AuthError() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AuthError() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
+        <div className="max-w-md w-full p-8 bg-[#303134] rounded-xl shadow-lg border border-gray-700">
+          <div className="animate-pulse space-y-4">
+            <div className="h-12 bg-gray-700 rounded-full w-12 mx-auto"></div>
+            <div className="h-6 bg-gray-700 rounded w-3/4 mx-auto"></div>
+            <div className="h-4 bg-gray-700 rounded w-1/2 mx-auto"></div>
+            <div className="h-24 bg-gray-700 rounded"></div>
+            <div className="h-10 bg-gray-700 rounded"></div>
+            <div className="h-6 bg-gray-700 rounded w-1/3 mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    }>
+      <AuthErrorContent />
+    </Suspense>
   );
 } 

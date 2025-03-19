@@ -14,31 +14,15 @@ export default function ClientProviders({
   children: ReactNode;
 }) {
   return (
-    <Suspense fallback={<>{children}</>}>
-      <ClientProvidersInner>
-        {children}
-      </ClientProvidersInner>
-    </Suspense>
-  );
-}
-
-function ClientProvidersInner({ 
-  children,
-}: { 
-  children: ReactNode;
-}) {
-  // Check if we're in a browser environment
-  const isBrowser = typeof window !== 'undefined';
-  
-  if (!isBrowser) {
-    // During static generation, render children without providers
-    return <>{children}</>;
-  }
-
-  return (
     <SessionProvider>
       <ChatLimitProvider>
-        {children}
+        <Suspense fallback={
+          <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+        }>
+          {children}
+        </Suspense>
       </ChatLimitProvider>
     </SessionProvider>
   );

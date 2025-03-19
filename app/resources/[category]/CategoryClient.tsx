@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import AgentChat from '../../components/AgentChat';
 import { Users, Briefcase, GraduationCap, Home, Plane, Scale, FileText, Folder } from 'lucide-react';
 
@@ -89,11 +89,25 @@ const CategoryClient: React.FC<CategoryClientProps> = ({ category }) => {
           <h1 className="text-3xl font-bold">{config.title}</h1>
         </div>
 
-        <AgentChat
-          title={config.title}
-          description={config.description}
-          endpoint={config.endpoint}
-        />
+        <Suspense fallback={
+          <div className="bg-[#282830] rounded-lg p-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-gray-700 rounded w-1/4"></div>
+              <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+              <div className="space-y-3 mt-8">
+                <div className="h-24 bg-gray-700 rounded"></div>
+                <div className="h-24 bg-gray-700 rounded"></div>
+              </div>
+              <div className="h-12 bg-gray-700 rounded mt-4"></div>
+            </div>
+          </div>
+        }>
+          <AgentChat
+            title={config.title}
+            description={config.description}
+            endpoint={config.endpoint}
+          />
+        </Suspense>
       </div>
     </div>
   );

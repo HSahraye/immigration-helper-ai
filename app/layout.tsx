@@ -4,7 +4,6 @@ import './globals.css'
 import ClientProviders from './ClientProviders'
 import { Footer } from './components/Footer'
 import Navigation from './components/Navigation'
-import ClientPage from './components/ClientPage'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,9 +23,7 @@ export default function RootLayout({
         <ClientProviders>
           <Navigation />
           <main className="flex-grow">
-            <ClientPage>
-              {children}
-            </ClientPage>
+            {children}
           </main>
           <Footer />
         </ClientProviders>

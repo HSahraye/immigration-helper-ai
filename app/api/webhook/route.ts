@@ -7,7 +7,15 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder'
   apiVersion: '2025-02-24.acacia',
 });
 
+// Add runtime configuration
+export const runtime = 'edge';
+
 export async function POST(req: NextRequest) {
+  // Skip processing during build time
+  if (process.env.NODE_ENV === 'production' && !process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json({ message: 'Webhook endpoint is not available during build' });
+  }
+
   const body = await req.text();
   const signature = req.headers.get('stripe-signature') || '';
 

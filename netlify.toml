@@ -11,15 +11,11 @@
   NEXT_SKIP_LINT = "true"
   NEXT_TELEMETRY_DISABLED = "1"
   NODE_OPTIONS = "--max-old-space-size=4096"
-  # Required environment variables
-  DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/immigration_helper"
-  STRIPE_SECRET_KEY = "sk_test_placeholder"
-  STRIPE_WEBHOOK_SECRET = "whsec_placeholder"
-  GOOGLE_CLIENT_ID = "placeholder"
-  GOOGLE_CLIENT_SECRET = "placeholder"
-  NEXTAUTH_SECRET = "immigration-helper-ai-secret-key"
-  NEXTAUTH_URL = "https://teal-pony-71653a.netlify.app"
+  # Dummy keys for build time
   OPENAI_API_KEY = "sk_dummy_key_for_netlify_build_only"
+  STRIPE_SECRET_KEY = "sk_test_dummy_key_for_netlify_build_only"
+  STRIPE_WEBHOOK_SECRET = "whsec_dummy_key_for_netlify_build_only"
+  DATABASE_URL = "postgresql://dummy:dummy@localhost:5432/dummy"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

@@ -1,6 +1,11 @@
 import OpenAI from 'openai';
 import { isBuildTime } from '@/app/api/setupMocksForBuild';
 
+/**
+ * Enhanced OpenAI client that supports both standard and project-style API keys
+ * Updated to handle special project keys that start with sk-proj-
+ */
+
 // Check if we're using a mock key
 const isMockKey = (key: string) => {
   // Check if key is empty or null
@@ -25,8 +30,10 @@ const isMockKey = (key: string) => {
 export function getOpenAIClient() {
   const apiKey = process.env.OPENAI_API_KEY;
   const isDev = process.env.NODE_ENV === 'development';
+  const isProd = process.env.NODE_ENV === 'production';
+  const buildTime = isBuildTime();
   
-  console.log(`OpenAI client initialization - env: ${process.env.NODE_ENV}, build time: ${isBuildTime()}`);
+  console.log(`OpenAI client initialization - env: ${process.env.NODE_ENV}, build time: ${buildTime}, API key exists: ${!!apiKey}`);
   
   if (!apiKey) {
     console.log('OpenAI API key is not defined in environment variables');
@@ -34,7 +41,7 @@ export function getOpenAIClient() {
   }
   
   // If we're in build time, return the mock client
-  if (isBuildTime()) {
+  if (buildTime) {
     console.log('Using mock OpenAI client for build time');
     return getMockOpenAIClient();
   }
@@ -46,7 +53,7 @@ export function getOpenAIClient() {
   }
   
   // Log that we're using the real client
-  console.log('Using real OpenAI client with key:', apiKey.substring(0, 10) + '...');
+  console.log(`Using real OpenAI client with key (${apiKey.substring(0, 10)}...) in ${isProd ? 'production' : 'development'} mode`);
   
   // Check if this is a project key format (starting with sk-proj-)
   if (apiKey.startsWith('sk-proj-')) {

@@ -2,8 +2,8 @@
 
 import { ReactNode, Suspense } from 'react';
 import { SessionProvider } from 'next-auth/react';
-import { ChatLimitProvider } from './contexts/ChatLimitContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { ChatLimitProvider } from './app/contexts/ChatLimitContext';
+import { AuthProvider } from './app/contexts/AuthContext';
 
 /**
  * ClientProviders handles all client-side context providers
@@ -29,4 +29,4 @@ export default function ClientProviders({
       </AuthProvider>
     </SessionProvider>
   );
-} 
+}

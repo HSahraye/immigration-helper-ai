@@ -8,6 +8,10 @@ import ChatLimitWarning from './ChatLimitWarning';
 interface Message {
   role: 'user' | 'assistant' | 'error';
   content: string;
+  details?: {
+    type?: string;
+    code?: string;
+  };
 }
 
 interface AgentChatProps {
@@ -54,7 +58,7 @@ export default function AgentChat({ endpoint, title, description }: AgentChatPro
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to get response');
+        throw new Error(data.message || data.error || 'Failed to get response');
       }
 
       // Add assistant message to chat
@@ -63,7 +67,17 @@ export default function AgentChat({ endpoint, title, description }: AgentChatPro
     } catch (error) {
       console.error('Error:', error);
       const errorMessage = error instanceof Error ? error.message : 'An error occurred while processing your request';
-      setMessages((prev) => [...prev, { role: 'error', content: errorMessage }]);
+      
+      // Add error message to chat with any additional details
+      setMessages((prev) => [...prev, { 
+        role: 'error', 
+        content: errorMessage,
+        details: {
+          type: error instanceof Error ? error.name : undefined,
+          code: (error as any)?.code
+        }
+      }]);
+      
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -96,7 +110,13 @@ export default function AgentChat({ endpoint, title, description }: AgentChatPro
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 max-w-[80%]'
                   }`}
                 >
-                  {message.content}
+                  <div>{message.content}</div>
+                  {message.role === 'error' && message.details && (
+                    <div className="mt-2 text-sm opacity-75">
+                      {message.details.type && <div>Type: {message.details.type}</div>}
+                      {message.details.code && <div>Code: {message.details.code}</div>}
+                    </div>
+                  )}
                 </div>
               ))}
               <div ref={messagesEndRef} />

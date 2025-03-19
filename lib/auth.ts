@@ -1,17 +1,9 @@
 import { getServerSession, type NextAuthOptions } from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
+import prisma from '@/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      authorization: {
-        params: {
-          prompt: "select_account"
-        }
-      }
-    }),
+    // Google provider has been removed per user request
   ],
   session: {
     strategy: "jwt",
@@ -23,6 +15,24 @@ export const authOptions: NextAuthOptions = {
       // Add user id to the session
       if (session.user && token.sub) {
         session.user.id = token.sub;
+        
+        // Get user's subscription data from database
+        const subscription = await prisma.subscription.findUnique({
+          where: { userId: token.sub },
+          include: { plan: true }
+        });
+        
+        if (subscription) {
+          session.user.stripeCustomerId = subscription.stripeCustomerId || null;
+          session.user.stripeSubscriptionId = subscription.stripeSubscriptionId || null;
+          session.user.subscriptionStatus = subscription.status || null;
+          session.user.plan = subscription.plan?.name?.toLowerCase() || null;
+          session.user.currentPeriodEnd = subscription.currentPeriodEnd ? subscription.currentPeriodEnd.toISOString() : null;
+        } else {
+          // Set defaults for users without subscriptions
+          session.user.plan = 'basic';
+          session.user.subscriptionStatus = 'inactive';
+        }
       }
       return session;
     },
@@ -64,10 +74,19 @@ declare module 'next-auth' {
       name?: string | null;
       email?: string | null;
       image?: string | null;
+      stripeCustomerId?: string | null;
+      stripeSubscriptionId?: string | null;
+      subscriptionStatus?: string | null;
+      plan?: string | null;
+      currentPeriodEnd?: string | null;
     };
   }
   
   interface JWT {
     userId?: string;
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+    subscriptionStatus?: string;
+    plan?: string;
   }
 } 

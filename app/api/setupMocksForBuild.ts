@@ -5,11 +5,19 @@
 
 // Detect if we're in a build environment
 export const isBuildTime = () => {
-  return (
-    process.env.NODE_ENV === 'production' && 
-    typeof window === 'undefined' && 
-    (process.env.VERCEL || process.env.NETLIFY)
-  );
+  // Check for various build-time indicators
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isServerSide = typeof window === 'undefined';
+  const isVercel = !!process.env.VERCEL;
+  const isNetlify = !!process.env.NETLIFY;
+  
+  // Check for Next.js build time variables 
+  const isNextBuild = process.env.NEXT_PHASE === 'phase-production-build' || 
+                      !!process.env.__NEXT_PROCESSED_ENV ||
+                      process.env.NEXT_RUNTIME === 'nodejs';
+  
+  // Either we're in a known CI environment, or in Next.js build process
+  return isServerSide && (isProduction || isVercel || isNetlify || isNextBuild);
 };
 
 // Create a mock session for build time

@@ -1,178 +1,133 @@
-'use client';
-
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 import Link from 'next/link';
-import { loadStripe } from '@stripe/stripe-js';
-import { AlertCircle } from 'lucide-react';
+import { CheckoutForm } from '@/app/checkout/checkout-form';
 
-// Initialize Stripe with your publishable key
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+export const metadata: Metadata = {
+  title: 'Checkout - Immigration Helper AI',
+  description: 'Complete your subscription to Immigration Helper AI.',
+};
 
-function CheckoutContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const session = useSession();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  
-  const planId = searchParams.get('plan');
-  
-  // Plan details
-  const planDetails = {
-    'basic': { name: 'Basic', price: 9.99 },
-    'professional': { name: 'Professional', price: 19.99 },
-  };
-  
-  const selectedPlan = planId && planDetails[planId as keyof typeof planDetails];
-  
-  useEffect(() => {
-    if (session.status === 'loading') return;
-    
-    if (session.status === 'unauthenticated') {
-      router.push('/auth/signin');
-      return;
-    }
-    
-    setIsLoading(false);
-  }, [session.status, router]);
-  
-  // Handle the checkout process
-  const handleCheckout = async () => {
-    if (!session.data?.user?.id) {
-      setError('Please sign in to continue');
-      return;
-    }
-
-    try {
-      setError('');
-      setIsLoading(true);
-
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: session.data.user.id,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create checkout session');
-      }
-
-      const stripe = await stripePromise;
-      if (!stripe) {
-        throw new Error('Stripe failed to initialize');
-      }
-
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId,
-      });
-
-      if (error) {
-        throw error;
-      }
-    } catch (err) {
-      console.error('Checkout error:', err);
-      setError('Failed to initiate checkout. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-      </div>
-    );
+const PLANS = {
+  basic: {
+    name: 'Basic',
+    price: 'Free',
+    features: [
+      'Basic document analysis',
+      'Limited chat assistance',
+      'Access to basic resources',
+      'Community support'
+    ],
+    stripe_price_id: process.env.STRIPE_PRICE_ID_BASIC
+  },
+  pro: {
+    name: 'Pro',
+    price: '$19.99/month',
+    features: [
+      'Advanced document analysis',
+      'Unlimited chat assistance',
+      'Priority support',
+      'Full resource access',
+      'Custom templates',
+      'Advanced analytics'
+    ],
+    stripe_price_id: process.env.STRIPE_PRICE_ID_PRO
   }
+};
+
+export default async function CheckoutPage({
+  searchParams,
+}: {
+  searchParams: { plan: string; test?: string; error?: string };
+}) {
+  const session = await getServerSession(authOptions);
+  const plan = searchParams.plan?.toLowerCase() || 'basic';
+  const isTestMode = searchParams.test === 'true';
   
-  if (!selectedPlan) {
-    return (
-      <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
-        <div className="max-w-md p-8 bg-[#303134] rounded-xl shadow-lg border border-gray-700">
-          <h1 className="text-2xl font-bold mb-4">No Plan Selected</h1>
-          <p className="text-gray-400 mb-6">Please select a subscription plan to continue.</p>
-          <Link
-            href="/subscribe"
-            className="block w-full py-3 bg-blue-600 hover:bg-blue-700 text-center rounded-lg font-medium transition-colors"
-          >
-            View Plans
-          </Link>
-        </div>
-      </div>
-    );
+  if (!PLANS[plan as keyof typeof PLANS]) {
+    redirect('/');
   }
-  
+
+  const selectedPlan = PLANS[plan as keyof typeof PLANS];
+  const error = searchParams.error;
+
   return (
-    <div className="min-h-screen bg-[#202124] text-gray-200 py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-        
-        {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-100 p-4 rounded-lg mb-6 flex items-center gap-2">
-            <AlertCircle className="w-5 h-5" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="bg-[#303134] rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
-          
-          <div className="space-y-4 mb-6">
-            <div className="flex justify-between items-center pb-4 border-b border-gray-700">
-              <div>
-                <h3 className="font-medium">{selectedPlan.name}</h3>
-                <p className="text-sm text-gray-400">Monthly subscription</p>
+    <div className="min-h-screen bg-[#202124] text-gray-200">
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-6">Complete Your Order</h1>
+            <p className="text-xl text-gray-400">
+              You're just one step away from accessing premium immigration tools.
+            </p>
+            {isTestMode && (
+              <div className="mt-4 p-3 bg-blue-500 bg-opacity-20 rounded-lg">
+                <p className="text-blue-300">
+                  ⚠️ You are in test mode. This will create a subscription without payment.
+                </p>
               </div>
-              <span>${selectedPlan.price}/month</span>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span>Total</span>
-              <span className="text-xl font-bold">${selectedPlan.price}/month</span>
-            </div>
+            )}
+            {error === 'email_required' && (
+              <div className="mt-4 p-3 bg-red-500 bg-opacity-20 rounded-lg">
+                <p className="text-red-300">
+                  Please provide your email address to continue.
+                </p>
+              </div>
+            )}
+            {error === 'payment_failed' && (
+              <div className="mt-4 p-3 bg-red-500 bg-opacity-20 rounded-lg">
+                <p className="text-red-300">
+                  There was an error processing your payment. Please try again.
+                </p>
+              </div>
+            )}
           </div>
 
-          <button
-            onClick={handleCheckout}
-            disabled={isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 disabled:cursor-not-allowed py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
-          >
-            {isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                Processing...
-              </>
-            ) : (
-              'Proceed to Payment'
-            )}
-          </button>
-        </div>
+          <div className="bg-[#303134] p-8 rounded-lg border border-gray-700 mb-8">
+            <div className="flex justify-between items-center mb-8 pb-8 border-b border-gray-700">
+              <div>
+                <h2 className="text-2xl font-semibold">{selectedPlan.name} Plan</h2>
+                <p className="text-gray-400">Monthly subscription</p>
+              </div>
+              <div className="text-2xl font-bold">{selectedPlan.price}</div>
+            </div>
 
-        <div className="text-sm text-gray-400">
-          <p>By proceeding with the payment, you agree to our terms of service and privacy policy.</p>
+            <div className="space-y-4 mb-8">
+              {selectedPlan.features.map((feature, index) => (
+                <div key={index} className="flex items-center">
+                  <span className="text-green-500 mr-3">✓</span>
+                  <span>{feature}</span>
+                </div>
+              ))}
+            </div>
+
+            <CheckoutForm 
+              plan={plan}
+              isTestMode={isTestMode} 
+              isSignedIn={!!session} 
+              buttonText={
+                plan === 'basic' ? 'Start Free Plan' : 
+                (isTestMode && !session) ? 'Sign In to Create Test Subscription' :
+                (isTestMode && session) ? 'Create Test Subscription' : 
+                'Proceed to Payment'
+              } 
+            />
+          </div>
+
+          <div className="text-center text-sm text-gray-400">
+            By subscribing, you agree to our{' '}
+            <a href="/terms" className="text-blue-400 hover:text-blue-300">
+              Terms of Service
+            </a>{' '}
+            and{' '}
+            <a href="/privacy" className="text-blue-400 hover:text-blue-300">
+              Privacy Policy
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  );
-}
-
-export default function CheckoutPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-      </div>
-    }>
-      <CheckoutContent />
-    </Suspense>
   );
 } 

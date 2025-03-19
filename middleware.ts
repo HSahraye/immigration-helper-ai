@@ -1,14 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// List of pages that require authentication
-const protectedPages = [
-  '/profile',
-  '/billing',
-  '/settings',
-  '/checkout',
-];
-
 // List of API routes that should be counted against the chat quota
 const quotaApiRoutes = [
   '/api/student-visas-agent',
@@ -19,21 +11,6 @@ const quotaApiRoutes = [
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // Check if page requires full authentication
-  if (protectedPages.some(page => pathname.startsWith(page))) {
-    // Check if the user is authenticated by looking for session token
-    // Check both possible cookie names (development vs production)
-    const authCookie = request.cookies.get('next-auth.session-token') || 
-                       request.cookies.get('__Secure-next-auth.session-token');
-    
-    if (!authCookie) {
-      // Store the original URL to redirect back after login
-      const url = new URL('/auth/signin', request.url);
-      url.searchParams.set('callbackUrl', request.nextUrl.pathname + request.nextUrl.search);
-      return NextResponse.redirect(url);
-    }
-  }
   
   // Check if the route is an API that should be tracked for quota
   if (quotaApiRoutes.some(route => pathname.startsWith(route))) {
@@ -47,12 +24,11 @@ export function middleware(request: NextRequest) {
     const chatCountCookie = request.cookies.get('chat-count');
     const chatCount = chatCountCookie ? parseInt(chatCountCookie.value, 10) : 0;
     
-    // Check if user is authenticated (check both possible cookie names)
-    const authCookie = request.cookies.get('next-auth.session-token') || 
-                       request.cookies.get('__Secure-next-auth.session-token');
+    // Check for session cookie
+    const sessionToken = request.cookies.get('session-token');
     
-    // If not authenticated and exceeded free limit, redirect to subscription page
-    if (!authCookie && chatCount >= 5) {
+    // If exceeded free limit, redirect to subscription page
+    if (!sessionToken && chatCount >= 5) {
       // When redirecting to subscribe page, also pass the original intended URL
       const url = new URL('/subscribe', request.url);
       url.searchParams.set('redirect', request.nextUrl.pathname);
@@ -61,10 +37,9 @@ export function middleware(request: NextRequest) {
     }
     
     // For authenticated users or users within quota, allow access
-    // Increment count will happen in the API route
     const response = NextResponse.next();
     
-    if (!authCookie) {
+    if (!sessionToken) {
       // Set cookie with incremented chat count (will expire in 24 hours)
       response.cookies.set({
         name: 'chat-count',

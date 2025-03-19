@@ -16,7 +16,8 @@
     "test:agents": "npm run build:scripts && node dist/scripts/testAgents.js",
     "test:file-upload": "npm run build:scripts && node dist/scripts/testFileUpload.js",
     "create:sample-pdf": "npm run build:scripts && node dist/scripts/createSamplePdf.js",
-    "update:openai-client": "npm run build:scripts && node dist/scripts/updateOpenAIClient.js"
+    "update:openai-client": "npm run build:scripts && node dist/scripts/updateOpenAIClient.js",
+    "prisma:seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",

@@ -1,10 +1,15 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useChatLimit } from '../contexts/ChatLimitContext';
 
 export default function ChatLimitWarning() {
   const { remainingChats, isLimitReached } = useChatLimit();
+  const router = useRouter();
+
+  const handleCreateAccount = () => {
+    router.push('/auth/signin');
+  };
 
   if (isLimitReached) {
     return (
@@ -13,15 +18,15 @@ export default function ChatLimitWarning() {
           Chat Limit Reached
         </h3>
         <p className="text-gray-600 dark:text-gray-300 mb-6">
-          You've reached the limit of 20 free chats. Sign in to continue using
+          You've reached the limit of 20 free chats. Create an account to continue using
           our immigration assistance service with unlimited access.
         </p>
         <div className="space-y-4">
           <button
-            onClick={() => signIn('google')}
+            onClick={handleCreateAccount}
             className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
           >
-            Continue with Google
+            Create Account
           </button>
         </div>
       </div>
@@ -34,10 +39,10 @@ export default function ChatLimitWarning() {
         <p className="text-yellow-800 dark:text-yellow-200">
           You have {remainingChats} free {remainingChats === 1 ? 'chat' : 'chats'} remaining.{' '}
           <button
-            onClick={() => signIn('google')}
+            onClick={handleCreateAccount}
             className="text-yellow-600 dark:text-yellow-400 underline hover:text-yellow-800 dark:hover:text-yellow-300"
           >
-            Sign in
+            Create an account
           </button>{' '}
           for unlimited access.
         </p>

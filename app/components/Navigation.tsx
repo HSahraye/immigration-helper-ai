@@ -2,16 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { Menu, X, User } from 'lucide-react';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const session = useSession();
-  const isAuthenticated = session?.status === 'authenticated';
-
-  // Add loading state handling
-  if (session?.status === 'loading') {
+  const { user, isLoading, logout } = useAuth();
+  
+  // Handle loading state
+  if (isLoading) {
     return (
       <nav className="bg-[#202124] text-gray-200 sticky top-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,6 +23,12 @@ export default function Navigation() {
       </nav>
     );
   }
+
+  const handleLogout = async () => {
+    await logout();
+    setIsMenuOpen(false);
+    window.location.href = '/';
+  };
 
   return (
     <nav className="bg-[#202124] text-gray-200 sticky top-0 z-50 shadow-md">
@@ -41,21 +46,17 @@ export default function Navigation() {
                 Home
               </Link>
               <Link href="/resources" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
-                Services
+                Resources
               </Link>
-              {isAuthenticated && (
-                <>
-                  <Link href="/chat" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
-                    Chat
-                  </Link>
-                  <Link href="/documents" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
-                    Documents
-                  </Link>
-                </>
-              )}
-              {isAuthenticated ? (
-                <Link href="/profile" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
-                  My Account
+              <Link href="/chat" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
+                Chat
+              </Link>
+              <Link href="/documents" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
+                Documents
+              </Link>
+              {user ? (
+                <Link href="/account" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
+                  {user.name || user.email?.split('@')[0]}
                 </Link>
               ) : (
                 <Link href="/auth/signin" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
@@ -66,10 +67,11 @@ export default function Navigation() {
           </div>
           
           <div className="md:hidden flex items-center">
-            {/* Profile button (visible even when menu is closed) */}
-            {isAuthenticated ? (
-              <Link href="/profile" className="p-1 mr-3">
-                <User className="h-6 w-6" />
+            {/* Profile info (visible even when menu is closed) */}
+            {user ? (
+              <Link href="/account" className="p-1 mr-3 flex items-center">
+                <User className="h-5 w-5 mr-1" />
+                <span className="text-sm">{user.name || user.email?.split('@')[0]}</span>
               </Link>
             ) : null}
             
@@ -104,9 +106,9 @@ export default function Navigation() {
               className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
               onClick={() => setIsMenuOpen(false)}
             >
-              Services
+              Resources
             </Link>
-            {!isAuthenticated && (
+            {!user && (
               <Link
                 href="/auth/signin"
                 className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-blue-400"
@@ -115,50 +117,35 @@ export default function Navigation() {
                 Sign In
               </Link>
             )}
-            {isAuthenticated && (
+            <Link
+              href="/chat"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Chat
+            </Link>
+            <Link
+              href="/documents"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Documents
+            </Link>
+            {user && (
               <>
                 <Link
-                  href="/chat"
-                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Chat
-                </Link>
-                <Link
-                  href="/documents"
-                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Documents
-                </Link>
-                <Link
-                  href="/profile"
-                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+                  href="/account"
+                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-blue-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   My Account
                 </Link>
-                <Link
-                  href="/profile?tab=subscription"
-                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Subscription
-                </Link>
-                <Link
-                  href="/profile?tab=history"
-                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Chat History
-                </Link>
-                <Link
-                  href="/api/auth/signout"
-                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-red-400"
-                  onClick={() => setIsMenuOpen(false)}
+                <button
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-red-400"
+                  onClick={handleLogout}
                 >
                   Sign Out
-                </Link>
+                </button>
               </>
             )}
           </div>

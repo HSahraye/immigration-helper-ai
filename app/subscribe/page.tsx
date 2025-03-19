@@ -2,33 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, signIn } from 'next-auth/react';
 import { CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 
 // Client-side only component wrapper
 import dynamic from 'next/dynamic';
 
 const ClientOnlySubscribePage = () => {
-  const session = useSession();
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   useEffect(() => {
-    if (session.status === 'loading') {
-      return;
-    }
-
-    if (session.status === 'unauthenticated') {
-      redirect('/auth/signin');
-    }
-
+    // Check if user is authenticated with localStorage
+    const email = localStorage.getItem('tempUserEmail');
+    setIsAuthenticated(!!email);
     setIsLoading(false);
-  }, [session.status]);
+  }, []);
   
   const handlePlanSelect = async (planId: string) => {
     setSelectedPlan(planId);
@@ -43,7 +36,7 @@ const ClientOnlySubscribePage = () => {
         console.error('Could not access localStorage:', e);
       }
       
-      // If authenticated, redirect to checkout
+      // Redirect to checkout
       router.push(`/checkout?plan=${planId}`);
       
     } catch (err) {

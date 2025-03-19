@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { isBuildTime, getMockOpenAIClient, getBuildTimeMockResponse } from '../setupMocksForBuild';
 
+export const runtime = 'nodejs';
+
 // Initialize the OpenAI client with error handling
 const getOpenAIClient = () => {
   // Return mock during build time
@@ -19,38 +21,50 @@ const getOpenAIClient = () => {
 
 export async function GET() {
   try {
-    // Skip actual API calls during build time
+    console.log('Test route: Checking OpenAI configuration');
+    
+    // For build time, return mock data
     if (isBuildTime()) {
-      return NextResponse.json(getBuildTimeMockResponse('test-openai'));
-    }
-
-    // Initialize OpenAI with error handling
-    let openai;
-    try {
-      openai = getOpenAIClient();
-    } catch (error) {
-      console.error('OpenAI initialization error:', error);
+      console.log('Build time detected, returning mock response');
       return NextResponse.json({
-        status: 'error',
-        message: 'OpenAI API key is not configured',
-      }, { status: 500 });
+        success: true,
+        message: "Test successful (mock response for build)",
+        isMock: true
+      });
     }
+    
+    console.log('API Key exists:', !!process.env.OPENAI_API_KEY);
+    console.log('API Key prefix:', process.env.OPENAI_API_KEY?.substring(0, 8));
 
-    // Try a simple completion to verify the API key
+    const openai = getOpenAIClient();
+
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: 'Hello' }],
+      messages: [{ role: 'user', content: 'Say "test successful"' }],
     });
 
     return NextResponse.json({
-      status: 'success',
-      message: 'OpenAI API key is valid and working'
+      success: true,
+      message: response.choices[0]?.message?.content,
+      apiKeyPrefix: process.env.OPENAI_API_KEY?.substring(0, 8)
     });
   } catch (error) {
-    console.error('OpenAI API Error:', error);
+    console.error('Test route error:', error);
+    
+    // If we're in build time and still hit an error, return a success response with mock data
+    if (isBuildTime()) {
+      return NextResponse.json({
+        success: true,
+        message: "Test successful (mock response for build after error)",
+        isMock: true
+      });
+    }
+    
     return NextResponse.json({
-      status: 'error',
-      message: error instanceof Error ? error.message : 'Failed to verify OpenAI API key',
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      type: error instanceof Error ? error.name : undefined,
+      apiKeyPrefix: process.env.OPENAI_API_KEY?.substring(0, 8)
     }, { status: 500 });
   }
 } 

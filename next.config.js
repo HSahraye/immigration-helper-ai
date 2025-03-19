@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configure for static generation
-  output: 'standalone',
+  output: 'export',
   
   // Set the output directory
   distDir: '.next',
@@ -12,10 +12,8 @@ const nextConfig = {
   
   // Basic configuration
   reactStrictMode: true,
-  env: {
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-  },
   images: {
+    unoptimized: true,
     domains: ['openai.com'],
     remotePatterns: [
       {

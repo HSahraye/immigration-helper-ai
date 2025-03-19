@@ -18,6 +18,10 @@
   NODE_OPTIONS = "--max_old_space_size=4096"
   # Set build environment
   NODE_ENV = "production"
+  
+# Disable the Next.js Runtime since we're using static export
+[plugins.inputs]
+  includeFiles = "dist/**"
 
 [functions]
   directory = "netlify/functions"

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 // List of API routes that should be counted against the chat quota
 const quotaApiRoutes = [
@@ -9,8 +10,20 @@ const quotaApiRoutes = [
   '/api/general-immigration-agent',
 ];
 
-export function middleware(request: NextRequest) {
+// List of paths that should always be publicly accessible
+const publicPaths = [
+  '/documents',
+  '/documents/',
+  '/resources'
+];
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // Check if path should be publicly accessible
+  if (publicPaths.some(path => pathname === path) || pathname.startsWith('/documents/')) {
+    return NextResponse.next();
+  }
   
   // Check if the route is an API that should be tracked for quota
   if (quotaApiRoutes.some(route => pathname.startsWith(route))) {
@@ -24,11 +37,11 @@ export function middleware(request: NextRequest) {
     const chatCountCookie = request.cookies.get('chat-count');
     const chatCount = chatCountCookie ? parseInt(chatCountCookie.value, 10) : 0;
     
-    // Check for session cookie
-    const sessionToken = request.cookies.get('session-token');
+    // Check for NextAuth session
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
     
     // If exceeded free limit, redirect to subscription page
-    if (!sessionToken && chatCount >= 5) {
+    if (!token && chatCount >= 5) {
       // When redirecting to subscribe page, also pass the original intended URL
       const url = new URL('/subscribe', request.url);
       url.searchParams.set('redirect', request.nextUrl.pathname);
@@ -39,7 +52,7 @@ export function middleware(request: NextRequest) {
     // For authenticated users or users within quota, allow access
     const response = NextResponse.next();
     
-    if (!sessionToken) {
+    if (!token) {
       // Set cookie with incremented chat count (will expire in 24 hours)
       response.cookies.set({
         name: 'chat-count',

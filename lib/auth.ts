@@ -1,9 +1,59 @@
 import { getServerSession, type NextAuthOptions } from 'next-auth';
 import prisma from '@/lib/prisma';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { createHash } from 'crypto';
+
+// Password verification function
+function verifyPassword(password: string, hash: string, salt: string): boolean {
+  const verifyHash = createHash('sha256')
+    .update(password + salt)
+    .digest('hex');
+  return verifyHash === hash;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
     // Google provider has been removed per user request
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            password: true,
+            salt: true,
+          },
+        });
+
+        if (!user || !user.password || !user.salt) {
+          return null;
+        }
+
+        // Verify the password
+        if (!verifyPassword(credentials.password, user.password, user.salt)) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image
+        };
+      }
+    })
   ],
   session: {
     strategy: "jwt",

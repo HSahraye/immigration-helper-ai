@@ -11,6 +11,7 @@ const categories = [
     icon: <Folder className="w-6 h-6" />,
     color: 'bg-blue-500',
     id: 'visa-applications',
+    path: '/resources/visa-applications',
   },
   {
     title: 'Citizenship',
@@ -18,6 +19,7 @@ const categories = [
     icon: <Users className="w-6 h-6" />,
     color: 'bg-green-500',
     id: 'citizenship',
+    path: '/resources/citizenship',
   },
   {
     title: 'Work Permits',
@@ -25,6 +27,7 @@ const categories = [
     icon: <Briefcase className="w-6 h-6" />,
     color: 'bg-purple-500',
     id: 'work-permits',
+    path: '/resources/work-permits',
   },
   {
     title: 'Family Sponsorship',
@@ -32,6 +35,7 @@ const categories = [
     icon: <Users className="w-6 h-6" />,
     color: 'bg-pink-500',
     id: 'family-sponsorship',
+    path: '/resources/family-sponsorship',
   },
   {
     title: 'Student Visas',
@@ -39,6 +43,7 @@ const categories = [
     icon: <GraduationCap className="w-6 h-6" />,
     color: 'bg-yellow-500',
     id: 'student-visas',
+    path: '/resources/student-visas',
   },
   {
     title: 'Permanent Residency',
@@ -46,6 +51,7 @@ const categories = [
     icon: <Home className="w-6 h-6" />,
     color: 'bg-red-500',
     id: 'permanent-residency',
+    path: '/resources/permanent-residency',
   },
   {
     title: 'Travel Documents',
@@ -53,6 +59,7 @@ const categories = [
     icon: <Plane className="w-6 h-6" />,
     color: 'bg-indigo-500',
     id: 'travel-documents',
+    path: '/resources/travel-documents',
   },
   {
     title: 'Legal Assistance',
@@ -60,6 +67,7 @@ const categories = [
     icon: <Scale className="w-6 h-6" />,
     color: 'bg-orange-500',
     id: 'legal-assistance',
+    path: '/resources/legal-assistance',
   },
   {
     title: 'Document Analysis',
@@ -67,6 +75,7 @@ const categories = [
     icon: <FileText className="w-6 h-6" />,
     color: 'bg-teal-500',
     id: 'document-analysis',
+    path: '/documents',
   },
 ];
 
@@ -86,7 +95,7 @@ export default function ResourcesPage() {
         {categories.map((category) => (
           <Link
             key={category.id}
-            href={`/resources/${category.id}`}
+            href={category.path || `/resources/${category.id}`}
             className="block bg-[#303134] rounded-xl p-6 hover:bg-[#404144] transition-all hover:shadow-lg border border-gray-700 hover:border-blue-500/30 cursor-pointer"
           >
             <div className={`${category.color} w-14 h-14 rounded-xl flex items-center justify-center mb-5 text-white shadow-lg transform hover:scale-105 transition-transform`}>

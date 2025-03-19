@@ -3,28 +3,45 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/app/contexts/AuthContext';
+import { signIn, useSession } from 'next-auth/react';
 
 function SignInContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, login, register, isLoading: authLoading } = useAuth();
+  const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [debugInfo, setDebugInfo] = useState<string>('');
   
   // Get callbackUrl from query string
-  const callbackUrl = searchParams.get('callbackUrl') || '/resources';
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+
+  useEffect(() => {
+    // Collect debug information
+    const params: Record<string, string> = {};
+    searchParams.forEach((value, key) => {
+      params[key] = value;
+    });
+    
+    setDebugInfo(JSON.stringify({
+      url: window.location.href,
+      params,
+      authStatus: status,
+      hasSession: !!session,
+      callbackUrl,
+    }, null, 2));
+  }, [searchParams, status, session, callbackUrl]);
   
   // Redirect if already logged in
   useEffect(() => {
-    if (user && !authLoading) {
+    if (session && status === 'authenticated') {
       router.push(callbackUrl);
     }
-  }, [user, authLoading, router, callbackUrl]);
+  }, [session, status, router, callbackUrl]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,21 +66,51 @@ function SignInContent() {
     setError(null);
     
     try {
-      let result;
-      
       if (isRegistering) {
-        // Register new user
-        result = await register(name, email, password);
+        // Register new user through API
+        const registerResponse = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        
+        const registerData = await registerResponse.json();
+        
+        if (!registerResponse.ok) {
+          setError(registerData.error || 'Registration failed');
+          setIsLoading(false);
+          return;
+        }
+        
+        // After registration, sign in
+        const result = await signIn('credentials', { 
+          redirect: false,
+          email, 
+          password,
+          callbackUrl 
+        });
+        
+        if (result?.ok) {
+          router.push(callbackUrl);
+        } else {
+          setError(result?.error || 'Failed to sign in after registration');
+          setIsLoading(false);
+        }
       } else {
-        // Login existing user
-        result = await login(email, password);
-      }
-      
-      if (result.success) {
-        router.push(callbackUrl);
-      } else {
-        setError(result.error || 'Authentication failed');
-        setIsLoading(false);
+        // Login using NextAuth
+        const result = await signIn('credentials', { 
+          redirect: false,
+          email, 
+          password,
+          callbackUrl 
+        });
+        
+        if (result?.ok) {
+          router.push(callbackUrl);
+        } else {
+          setError('Invalid email or password');
+          setIsLoading(false);
+        }
       }
     } catch (err) {
       console.error('Error:', err);
@@ -72,7 +119,7 @@ function SignInContent() {
     }
   };
   
-  if (authLoading) {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -197,6 +244,15 @@ function SignInContent() {
               Privacy Policy
             </Link>
           </div>
+          
+          {/* Debug information (hidden by default) */}
+          <details className="mt-8 text-xs text-gray-500 border-t border-gray-700 pt-4">
+            <summary className="cursor-pointer">Debug Information</summary>
+            <pre className="mt-2 p-2 bg-[#202124] rounded overflow-auto">{debugInfo}</pre>
+            <div className="mt-2">
+              <Link href="/auth-test" className="text-blue-400">Go to Auth Test Page</Link>
+            </div>
+          </details>
         </div>
       </div>
     </div>

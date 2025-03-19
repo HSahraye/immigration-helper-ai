@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
-import { getServerSession } from 'next-auth/next';
-import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Document Analysis - Immigration Helper AI',
@@ -9,12 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function DocumentsPage() {
-  const session = await getServerSession(authOptions);
-  
-  if (!session) {
-    redirect('/auth/signin');
-  }
-
   return (
     <div className="min-h-screen bg-[#202124] text-gray-200">
       <div className="container mx-auto px-4 py-16">

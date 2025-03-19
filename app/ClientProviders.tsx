@@ -3,7 +3,6 @@
 import { ReactNode, Suspense } from 'react';
 import { SessionProvider } from 'next-auth/react';
 import { ChatLimitProvider } from './contexts/ChatLimitContext';
-import { AuthProvider } from './contexts/AuthContext';
 
 /**
  * ClientProviders handles all client-side context providers
@@ -16,17 +15,15 @@ export default function ClientProviders({
 }) {
   return (
     <SessionProvider>
-      <AuthProvider>
-        <ChatLimitProvider>
-          <Suspense fallback={
-            <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            </div>
-          }>
-            {children}
-          </Suspense>
-        </ChatLimitProvider>
-      </AuthProvider>
+      <ChatLimitProvider>
+        <Suspense fallback={
+          <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+        }>
+          {children}
+        </Suspense>
+      </ChatLimitProvider>
     </SessionProvider>
   );
 } 

@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, User } from 'lucide-react';
-import { useAuth } from '@/app/contexts/AuthContext';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, isLoading, logout } = useAuth();
+  const { data: session, status } = useSession();
   
   // Handle loading state
-  if (isLoading) {
+  if (status === 'loading') {
     return (
       <nav className="bg-[#202124] text-gray-200 sticky top-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,7 +25,7 @@ export default function Navigation() {
   }
 
   const handleLogout = async () => {
-    await logout();
+    await signOut({ redirect: false });
     setIsMenuOpen(false);
     window.location.href = '/';
   };
@@ -54,9 +54,9 @@ export default function Navigation() {
               <Link href="/documents" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
                 Documents
               </Link>
-              {user ? (
+              {session?.user ? (
                 <Link href="/account" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
-                  {user.name || user.email?.split('@')[0]}
+                  {session.user.name || session.user.email?.split('@')[0]}
                 </Link>
               ) : (
                 <Link href="/auth/signin" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
@@ -68,10 +68,10 @@ export default function Navigation() {
           
           <div className="md:hidden flex items-center">
             {/* Profile info (visible even when menu is closed) */}
-            {user ? (
+            {session?.user ? (
               <Link href="/account" className="p-1 mr-3 flex items-center">
                 <User className="h-5 w-5 mr-1" />
-                <span className="text-sm">{user.name || user.email?.split('@')[0]}</span>
+                <span className="text-sm">{session.user.name || session.user.email?.split('@')[0]}</span>
               </Link>
             ) : null}
             
@@ -108,7 +108,7 @@ export default function Navigation() {
             >
               Resources
             </Link>
-            {!user && (
+            {!session?.user && (
               <Link
                 href="/auth/signin"
                 className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-blue-400"
@@ -131,7 +131,7 @@ export default function Navigation() {
             >
               Documents
             </Link>
-            {user && (
+            {session?.user && (
               <>
                 <Link
                   href="/account"

@@ -20,31 +20,28 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    esmExternals: 'loose',
-    serverComponentsExternalPackages: ['react', 'react-dom', 'next-auth'],
-  },
-  // Only transpile packages that are not in serverComponentsExternalPackages
-  transpilePackages: [],
-  // Extreme measures to ignore TypeScript errors
+  
+  // TypeScript configuration
   typescript: {
     ignoreBuildErrors: false,
     tsconfigPath: './tsconfig.json',
   },
-  // Disable ESLint completely
+  
+  // ESLint configuration
   eslint: {
     ignoreDuringBuilds: false,
   },
-  swcMinify: true, // Enable SWC minification
   
   // Disable source maps
   productionBrowserSourceMaps: false,
+  
   compiler: {
     // Support styled-components
     styledComponents: true,
-    // Ignore all TypeScript errors
+    // Remove test properties
     reactRemoveProperties: { properties: ['^data-test'] },
   },
+  
   webpack: (config, { isServer }) => {
     // Skip optimization passes
     if (!isServer) {

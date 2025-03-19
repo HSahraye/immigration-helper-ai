@@ -8,8 +8,7 @@ export { generateStaticParams };
 
 // GET /api/documents/[id] - Get a specific document
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest
 ) {
   try {
     const session = await getAuthSession();
@@ -18,7 +17,12 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const document = await getDocument(params.id, session.user.id);
+    const id = request.nextUrl.pathname.split('/').pop();
+    if (!id) {
+      return NextResponse.json({ error: 'Document ID is required' }, { status: 400 });
+    }
+    
+    const document = await getDocument(id, session.user.id);
     return NextResponse.json(document);
   } catch (error) {
     console.error('Error getting document:', error);
@@ -28,8 +32,7 @@ export async function GET(
 
 // PATCH /api/documents/[id] - Update a document
 export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest
 ) {
   try {
     const session = await getAuthSession();
@@ -38,14 +41,19 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const updates = await req.json();
+    const id = request.nextUrl.pathname.split('/').pop();
+    if (!id) {
+      return NextResponse.json({ error: 'Document ID is required' }, { status: 400 });
+    }
+    
+    const updates = await request.json();
     
     // Validate updates
     if (!updates || (updates.title === undefined && updates.content === undefined && updates.status === undefined)) {
       return NextResponse.json({ error: 'No valid update fields provided' }, { status: 400 });
     }
     
-    const updatedDocument = await updateDocument(params.id, session.user.id, updates);
+    const updatedDocument = await updateDocument(id, session.user.id, updates);
     return NextResponse.json(updatedDocument);
   } catch (error) {
     console.error('Error updating document:', error);
@@ -55,8 +63,7 @@ export async function PATCH(
 
 // DELETE /api/documents/[id] - Delete a document
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest
 ) {
   try {
     const session = await getAuthSession();
@@ -65,7 +72,12 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const success = await deleteDocument(params.id, session.user.id);
+    const id = request.nextUrl.pathname.split('/').pop();
+    if (!id) {
+      return NextResponse.json({ error: 'Document ID is required' }, { status: 400 });
+    }
+    
+    const success = await deleteDocument(id, session.user.id);
     
     if (!success) {
       return NextResponse.json({ error: 'Failed to delete document' }, { status: 500 });

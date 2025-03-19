@@ -22,7 +22,16 @@ export function generateStaticParams() {
   }));
 }
 
+interface Params {
+  category: string;
+}
+
+interface Props {
+  params: Promise<Params>;
+}
+
 // This is the main Server Component
-export default function CategoryPage({ params }: { params: { category: string } }) {
-  return <CategoryClient category={params.category} />;
+export default async function CategoryPage({ params }: Props) {
+  const { category } = await params;
+  return <CategoryClient category={category} />;
 }

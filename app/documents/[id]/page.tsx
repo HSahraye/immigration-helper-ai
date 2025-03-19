@@ -7,26 +7,35 @@ import { Badge } from '@/components/ui/badge';
 import { AlertCircle, FileDown, PenSquare } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
-import { generateStaticParams } from '@/app/route-config';
 
 export const metadata: Metadata = {
   title: 'Document Details | Immigration Helper AI',
   description: 'View and manage your immigration document.',
 };
 
-// Export generateStaticParams for static generation
-export { generateStaticParams };
+export async function generateStaticParams() {
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+  ];
+}
 
-export default async function DocumentDetailsPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+interface Params {
+  id: string;
+}
+
+interface Props {
+  params: Promise<Params>;
+}
+
+export default async function DocumentDetailsPage({ params }: Props) {
+  const { id } = await params;
   const session = await getAuthSession();
 
   // Redirect unauthenticated users
   if (!session?.user) {
-    redirect(`/api/auth/signin?callbackUrl=/documents/${params.id}`);
+    redirect(`/api/auth/signin?callbackUrl=/documents/${id}`);
   }
 
   return (
@@ -86,7 +95,7 @@ export default async function DocumentDetailsPage({
                 <h3 className="font-medium mb-2">Document Management</h3>
                 <div className="flex flex-col gap-2">
                   <Button asChild variant="outline">
-                    <Link href={`/documents/${params.id}/edit`}>
+                    <Link href={`/documents/${id}/edit`}>
                       <PenSquare className="h-4 w-4 mr-2" />
                       Edit Document
                     </Link>

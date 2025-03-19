@@ -39,7 +39,7 @@ export function middleware(request: NextRequest) {
   if (quotaApiRoutes.some(route => pathname.startsWith(route))) {
     // Get anonymous user identifier (IP or fingerprint)
     const anonymousId = request.cookies.get('anonymous-user-id')?.value || 
-                         request.ip || 
+                         request.headers.get('x-real-ip') || 
                          request.headers.get('x-forwarded-for') || 
                          'unknown';
     

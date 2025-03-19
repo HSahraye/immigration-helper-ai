@@ -8,7 +8,22 @@ import { Menu, X, User } from 'lucide-react';
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const session = useSession();
-  const isAuthenticated = session.status === 'authenticated';
+  const isAuthenticated = session?.status === 'authenticated';
+
+  // Add loading state handling
+  if (session?.status === 'loading') {
+    return (
+      <nav className="bg-[#202124] text-gray-200 sticky top-0 z-50 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <span className="flex-shrink-0 text-xl font-bold">Immigration Helper AI</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="bg-[#202124] text-gray-200 sticky top-0 z-50 shadow-md">

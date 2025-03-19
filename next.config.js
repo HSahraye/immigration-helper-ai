@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Configure for server-side rendering
-  trailingSlash: true,
+  // Configure for static generation
+  output: 'standalone',
   
   // Set the output directory
   distDir: '.next',
@@ -10,8 +10,8 @@ const nextConfig = {
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
   
-  // DRASTIC MEASURES TO FIX BUILD ERRORS
-  reactStrictMode: false, // Disable strict mode
+  // Basic configuration
+  reactStrictMode: true,
   env: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
@@ -25,19 +25,19 @@ const nextConfig = {
     ],
   },
   experimental: {
-    esmExternals: 'loose', // Needed for proper TypeScript resolution
+    esmExternals: 'loose',
     serverComponentsExternalPackages: ['react', 'react-dom', 'next-auth'],
   },
   // Only transpile packages that are not in serverComponentsExternalPackages
   transpilePackages: [],
   // Extreme measures to ignore TypeScript errors
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
     tsconfigPath: './tsconfig.json',
   },
   // Disable ESLint completely
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   swcMinify: true, // Enable SWC minification
   

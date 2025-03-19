@@ -1,50 +1,48 @@
 import OpenAI from 'openai';
 import { prisma } from '../prisma';
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI client with error handling
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OpenAI API key is not configured in environment variables');
+  }
+  return new OpenAI({ apiKey });
+};
 
 // Define document types and statuses as string literals
 type DocumentType = 'VISA_APPLICATION' | 'COVER_LETTER' | 'SUPPORT_LETTER' | 'LEGAL_DOCUMENT' | 'OTHER';
 type DocumentStatus = 'DRAFT' | 'COMPLETED' | 'ARCHIVED';
 
-// Document templates by type
-const DOCUMENT_TEMPLATES: Record<DocumentType | string, string> = {
-  VISA_APPLICATION: `# Visa Application Cover Letter
+// Document templates
+const DOCUMENT_TEMPLATES: Record<DocumentType, string> = {
+  VISA_APPLICATION: `
+[CURRENT_DATE]
 
-## Applicant Information
-- Name: [APPLICANT_NAME]
-- Date of Birth: [DOB]
-- Nationality: [NATIONALITY]
-- Passport Number: [PASSPORT_NUMBER]
+To: [RECIPIENT_NAME]
+[ORGANIZATION_NAME]
+[ADDRESS]
 
-## Purpose of Travel
-[PURPOSE_OF_TRAVEL]
+Subject: Visa Application - [APPLICANT_NAME]
 
-## Travel Details
-- Intended Arrival Date: [ARRIVAL_DATE]
-- Intended Departure Date: [DEPARTURE_DATE]
-- Accommodation: [ACCOMMODATION_DETAILS]
+Dear [RECIPIENT_NAME],
 
-## Supporting Documents
-1. Passport
-2. Proof of financial means
-3. Travel itinerary
-4. Accommodation details
-5. [ADDITIONAL_DOCUMENTS]
+I, [APPLICANT_NAME], a citizen of [NATIONALITY], am writing to apply for a visa to [PURPOSE_OF_TRAVEL]. I plan to arrive on [ARRIVAL_DATE] and depart on [DEPARTURE_DATE].
 
-## Statement
-I hereby confirm that the information provided in this application is true and complete. I understand that any false or misleading information may result in the refusal of my visa application.
+During my stay, I will be residing at:
+[ACCOMMODATION_DETAILS]
+
+Additional Documents Attached:
+[ADDITIONAL_DOCUMENTS]
+
+I hereby declare that all information provided is true and accurate to the best of my knowledge.
 
 Sincerely,
 [APPLICANT_NAME]
-[CURRENT_DATE]
-`,
-
-  COVER_LETTER: `# Immigration Cover Letter
-
+Passport Number: [PASSPORT_NUMBER]
+  `,
+  
+  COVER_LETTER: `
 [CURRENT_DATE]
 
 [RECIPIENT_NAME]
@@ -54,30 +52,22 @@ Sincerely,
 
 Dear [RECIPIENT_NAME],
 
-I am writing to [PURPOSE_STATEMENT].
+[PURPOSE_STATEMENT]
 
-## Background and Qualifications
 [BACKGROUND_DETAILS]
 
-## Immigration Intent
 [IMMIGRATION_INTENT]
 
-## Supporting Evidence
 [SUPPORTING_EVIDENCE]
 
-## Conclusion
 [CONCLUSION]
 
-Thank you for your consideration of my application. I look forward to your favorable response.
-
 Sincerely,
-
 [APPLICANT_NAME]
 [CONTACT_INFORMATION]
-`,
-
-  SUPPORT_LETTER: `# Letter of Support
-
+  `,
+  
+  SUPPORT_LETTER: `
 [CURRENT_DATE]
 
 [RECIPIENT_NAME]
@@ -85,89 +75,77 @@ Sincerely,
 [ORGANIZATION_NAME]
 [ADDRESS]
 
-Re: Support for [APPLICANT_NAME]'s [APPLICATION_TYPE]
-
 Dear [RECIPIENT_NAME],
 
-I am writing this letter in support of [APPLICANT_NAME]'s application for [APPLICATION_TYPE]. I have known [APPLICANT_NAME] for [LENGTH_OF_RELATIONSHIP] in my capacity as [RELATIONSHIP_TYPE].
+I, [SUPPORTER_NAME], am writing this letter in support of [APPLICANT_NAME]'s [APPLICATION_TYPE] application.
 
-## Character Reference
-[CHARACTER_REFERENCE]
+I have known [APPLICANT_NAME] for [LENGTH_OF_RELATIONSHIP] as [RELATIONSHIP_TYPE]. [CHARACTER_REFERENCE]
 
-## Relationship Details
 [RELATIONSHIP_DETAILS]
 
-## Support Statement
 [SUPPORT_DETAILS]
 
-I firmly believe that [APPLICANT_NAME] would be an excellent candidate for [APPLICATION_TYPE]. If you require any further information, please do not hesitate to contact me at [CONTACT_INFORMATION].
-
 Sincerely,
-
 [SUPPORTER_NAME]
 [SUPPORTER_TITLE/POSITION]
 [SUPPORTER_CONTACT]
-`,
-
-  LEGAL_DOCUMENT: `# Legal Document
-
+  `,
+  
+  LEGAL_DOCUMENT: `
 [DOCUMENT_TITLE]
 
-## Parties
-- [PARTY_A_NAME], hereinafter referred to as "[PARTY_A_SHORT]"
-- [PARTY_B_NAME], hereinafter referred to as "[PARTY_B_SHORT]"
+THIS AGREEMENT is made on [CURRENT_DATE] between:
 
-## Purpose
+[PARTY_A_NAME] (hereinafter referred to as "[PARTY_A_SHORT]")
+and
+[PARTY_B_NAME] (hereinafter referred to as "[PARTY_B_SHORT]")
+
 [PURPOSE_STATEMENT]
 
-## Terms and Conditions
 1. [TERM_1]
-2. [TERM_2]
-3. [TERM_3]
-4. [ADDITIONAL_TERMS]
 
-## Declaration
+2. [TERM_2]
+
+3. [TERM_3]
+
+[ADDITIONAL_TERMS]
+
 [DECLARATION_STATEMENT]
 
-## Signatures
+SIGNED by:
 
-___________________________
+________________________
 [PARTY_A_NAME]
-[DATE]
 
-___________________________
+________________________
 [PARTY_B_NAME]
-[DATE]
 
-## Witnesses (if applicable)
+Witnessed by:
 
-___________________________
+________________________
 [WITNESS_1_NAME]
-[DATE]
 
-___________________________
+________________________
 [WITNESS_2_NAME]
-[DATE]
-`,
-
-  OTHER: `# [DOCUMENT_TITLE]
+  `,
+  
+  OTHER: `
+[DOCUMENT_TITLE]
 
 [CURRENT_DATE]
 
-## Introduction
+[NAME]
+[CONTACT_INFORMATION]
+
 [INTRODUCTION_TEXT]
 
-## Main Content
 [MAIN_CONTENT]
 
-## Conclusion
 [CONCLUSION]
 
 Sincerely,
-
 [NAME]
-[CONTACT_INFORMATION]
-`,
+  `,
 };
 
 /**
@@ -198,6 +176,15 @@ export async function generateDocument(
       template = template.replace(/\[CURRENT_DATE\]/g, currentDate);
     }
     
+    // Initialize OpenAI with error handling
+    let openai;
+    try {
+      openai = getOpenAIClient();
+    } catch (error) {
+      console.error('OpenAI initialization error:', error);
+      throw new Error('OpenAI API key not configured');
+    }
+    
     // Use OpenAI to enhance the document
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
@@ -218,7 +205,15 @@ export async function generateDocument(
     const enhancedDocument = completion.choices[0].message.content || template;
     
     // Save document to database
-    await saveDocument(userId, documentType, title, enhancedDocument);
+    const document = await prisma.document.create({
+      data: {
+        userId,
+        type: documentType,
+        title,
+        content: enhancedDocument,
+        status: 'DRAFT',
+      },
+    });
     
     return enhancedDocument;
   } catch (error) {
@@ -228,135 +223,42 @@ export async function generateDocument(
 }
 
 /**
- * Save a document to the database
- */
-export async function saveDocument(
-  userId: string,
-  documentType: DocumentType,
-  title: string,
-  content: string,
-  status: DocumentStatus = 'DRAFT'
-): Promise<void> {
-  try {
-    await prisma.document.create({
-      data: {
-        userId,
-        title,
-        content,
-        type: documentType,
-        status,
-      },
-    });
-  } catch (error) {
-    console.error('Error saving document:', error);
-    throw new Error('Failed to save document');
-  }
-}
-
-/**
  * Get all documents for a user
  */
 export async function getUserDocuments(userId: string) {
-  try {
-    return await prisma.document.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
-  } catch (error) {
-    console.error('Error getting user documents:', error);
-    throw new Error('Failed to get user documents');
-  }
+  return prisma.document.findMany({
+    where: { userId },
+    orderBy: { updatedAt: 'desc' },
+  });
 }
 
 /**
  * Get a specific document
  */
-export async function getDocument(documentId: string, userId: string) {
-  try {
-    const document = await prisma.document.findFirst({
-      where: {
-        id: documentId,
-        userId,
-      },
-    });
-    
-    if (!document) {
-      throw new Error('Document not found');
-    }
-    
-    return document;
-  } catch (error) {
-    console.error('Error getting document:', error);
-    throw new Error('Failed to get document');
-  }
+export async function getDocument(id: string, userId: string) {
+  return prisma.document.findFirst({
+    where: { id, userId },
+  });
 }
 
 /**
  * Update a document
  */
-export async function updateDocument(
-  documentId: string,
-  userId: string,
-  updates: {
-    title?: string;
-    content?: string;
-    status?: DocumentStatus;
-  }
-) {
-  try {
-    // Check if document exists and belongs to user
-    const existingDocument = await prisma.document.findFirst({
-      where: {
-        id: documentId,
-        userId,
-      },
-    });
-    
-    if (!existingDocument) {
-      throw new Error('Document not found or unauthorized');
-    }
-    
-    // Update document
-    return await prisma.document.update({
-      where: {
-        id: documentId,
-      },
-      data: updates,
-    });
-  } catch (error) {
-    console.error('Error updating document:', error);
-    throw new Error('Failed to update document');
-  }
+export async function updateDocument(id: string, userId: string, data: Partial<{ title: string; content: string; status: DocumentStatus }>) {
+  return prisma.document.update({
+    where: { id, userId },
+    data,
+  });
 }
 
 /**
  * Delete a document
  */
-export async function deleteDocument(documentId: string, userId: string): Promise<boolean> {
+export async function deleteDocument(id: string, userId: string) {
   try {
-    // Check if document exists and belongs to user
-    const existingDocument = await prisma.document.findFirst({
-      where: {
-        id: documentId,
-        userId,
-      },
-    });
-    
-    if (!existingDocument) {
-      throw new Error('Document not found or unauthorized');
-    }
-    
-    // Delete document
     await prisma.document.delete({
-      where: {
-        id: documentId,
-      },
+      where: { id, userId },
     });
-    
     return true;
   } catch (error) {
     console.error('Error deleting document:', error);
@@ -367,42 +269,33 @@ export async function deleteDocument(documentId: string, userId: string): Promis
 /**
  * Analyze a document using AI
  */
-export async function analyzeDocument(content: string): Promise<{ analysis: string; suggestions: string[] }> {
+export async function analyzeDocument(content: string): Promise<string> {
   try {
+    // Initialize OpenAI with error handling
+    let openai;
+    try {
+      openai = getOpenAIClient();
+    } catch (error) {
+      console.error('OpenAI initialization error:', error);
+      throw new Error('OpenAI API key not configured');
+    }
+    
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
         {
-          role: "system", 
-          content: `You are an expert immigration document analyst. Your task is to analyze the provided document, assess its quality, completeness, and effectiveness for immigration purposes. Provide a thorough analysis and clear, actionable suggestions for improvement.`
+          role: "system",
+          content: "You are an expert immigration document analyzer. Your task is to analyze the provided document and provide detailed feedback on its content, structure, and potential improvements."
         },
         {
           role: "user",
-          content: `Please analyze this immigration document and provide feedback:\n\n${content}\n\nProvide: 1) A detailed analysis of the document's strengths and weaknesses, and 2) A numbered list of specific suggestions for improvement.`
+          content: `Please analyze this immigration document and provide detailed feedback:\n\n${content}`
         }
       ],
-      temperature: 0.5,
+      temperature: 0.7,
     });
     
-    const response = completion.choices[0].message.content || '';
-    
-    // Extract analysis and suggestions
-    const analysisPart = response.split('Suggestions:')[0] || response;
-    
-    // Extract the suggestions as an array
-    const suggestionText = response.includes('Suggestions:') 
-      ? response.split('Suggestions:')[1] 
-      : '';
-      
-    const suggestions = suggestionText
-      .split(/\d+\./)
-      .filter(item => item.trim().length > 0)
-      .map(item => item.trim());
-    
-    return {
-      analysis: analysisPart.trim(),
-      suggestions,
-    };
+    return completion.choices[0].message.content || 'Unable to analyze document.';
   } catch (error) {
     console.error('Error analyzing document:', error);
     throw new Error('Failed to analyze document');

@@ -3,7 +3,7 @@ import { getAuthSession } from '@/lib/auth';
 import Stripe from 'stripe';
 
 // Initialize Stripe with your secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2025-02-24.acacia',
 });
 
@@ -36,25 +36,22 @@ export async function POST(req: NextRequest) {
     
     // Parse request body
     const body = await req.json();
-    const { planId, successUrl, cancelUrl } = body;
     
     // Validate plan
-    if (!planId || !PLANS[planId as keyof typeof PLANS]) {
+    if (!body.userId || !session.user.id) {
       return NextResponse.json(
-        { error: 'Invalid plan selected' },
+        { error: 'Invalid user ID' },
         { status: 400 }
       );
     }
-    
-    const plan = PLANS[planId as keyof typeof PLANS];
-    
+
     // Create a Stripe checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
       line_items: [
         {
-          price: plan.priceId,
+          price: process.env.STRIPE_BASIC_PRICE_ID, // Default to basic plan
           quantity: 1,
         },
       ],
@@ -63,24 +60,22 @@ export async function POST(req: NextRequest) {
       subscription_data: {
         metadata: {
           userId: session.user.id,
-          planId: planId,
         },
       },
-      success_url: successUrl || `${process.env.NEXTAUTH_URL}/checkout/success`,
-      cancel_url: cancelUrl || `${process.env.NEXTAUTH_URL}/subscribe`,
+      success_url: `${process.env.NEXTAUTH_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/subscribe`,
       metadata: {
         userId: session.user.id,
-        planId: planId,
       },
     });
     
-    return NextResponse.json({ url: checkoutSession.url });
+    return NextResponse.json({ sessionId: checkoutSession.id });
     
   } catch (error) {
     console.error('Error creating checkout session:', error);
     
     return NextResponse.json(
-      { error: 'An error occurred while creating the checkout session' },
+      { error: 'Failed to initiate checkout. Please try again.' },
       { status: 500 }
     );
   }

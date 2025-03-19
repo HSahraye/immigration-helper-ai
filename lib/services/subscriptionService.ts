@@ -1,5 +1,5 @@
 import { prisma } from '../prisma';
-import { SubscriptionStatus } from '@prisma/client';
+import { SubscriptionStatus } from './usageService';
 import Stripe from 'stripe';
 
 // Initialize Stripe client
@@ -73,7 +73,6 @@ export async function createSubscription(
           stripeSubscriptionId: stripeSubscriptionId || existingSubscription.stripeSubscriptionId,
           currentPeriodStart: currentDate,
           currentPeriodEnd: periodEndDate,
-          cancelAtPeriodEnd: false,
         },
         include: {
           plan: true,
@@ -149,7 +148,6 @@ export async function cancelSubscription(userId: string, cancelImmediately = fal
       where: { id: subscription.id },
       data: {
         status: cancelImmediately ? 'CANCELED' as SubscriptionStatus : 'ACTIVE' as SubscriptionStatus,
-        cancelAtPeriodEnd: !cancelImmediately,
       },
       include: {
         plan: true,
@@ -300,7 +298,6 @@ async function handleSubscriptionUpdated(stripeSubscription: Stripe.Subscription
         status,
         currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
         currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
-        cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
       },
     });
   } else {
@@ -324,7 +321,6 @@ async function handleSubscriptionUpdated(stripeSubscription: Stripe.Subscription
             stripeSubscriptionId: stripeSubscription.id,
             currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
             currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
-            cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
           },
         });
       }

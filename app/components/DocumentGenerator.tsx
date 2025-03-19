@@ -7,12 +7,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Loader2 } from 'lucide-react';
-import { generateDocument } from '@/lib/services/documentService';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
 
 // DocumentType as string literals to match service
 type DocumentType = 'VISA_APPLICATION' | 'COVER_LETTER' | 'SUPPORT_LETTER' | 'LEGAL_DOCUMENT' | 'OTHER';
@@ -20,8 +18,10 @@ type DocumentType = 'VISA_APPLICATION' | 'COVER_LETTER' | 'SUPPORT_LETTER' | 'LE
 // Template param fields by document type
 const TEMPLATE_FIELDS: Record<DocumentType, Array<{ key: string; label: string; type: 'text' | 'textarea' }>> = {
   VISA_APPLICATION: [
+    { key: 'RECIPIENT_NAME', label: 'Recipient Name', type: 'text' },
+    { key: 'ORGANIZATION_NAME', label: 'Organization Name', type: 'text' },
+    { key: 'ADDRESS', label: 'Address', type: 'textarea' },
     { key: 'APPLICANT_NAME', label: 'Applicant Name', type: 'text' },
-    { key: 'DOB', label: 'Date of Birth', type: 'text' },
     { key: 'NATIONALITY', label: 'Nationality', type: 'text' },
     { key: 'PASSPORT_NUMBER', label: 'Passport Number', type: 'text' },
     { key: 'PURPOSE_OF_TRAVEL', label: 'Purpose of Travel', type: 'textarea' },
@@ -123,7 +123,7 @@ export default function DocumentGenerator() {
 
     // Check if required fields are filled
     const requiredFields = TEMPLATE_FIELDS[selectedType].filter(
-      field => !parameters[field.key]
+      field => !parameters[field.key]?.trim()
     );
     
     if (requiredFields.length > 0) {
@@ -140,12 +140,28 @@ export default function DocumentGenerator() {
     setError('');
 
     try {
-      await generateDocument(session.data.user.id, selectedType, title, parameters);
+      const response = await fetch('/api/documents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          documentType: selectedType,
+          title,
+          parameters,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to generate document');
+      }
+
       // Redirect to documents list page
       router.push('/documents');
     } catch (err) {
       console.error('Error generating document:', err);
-      setError('Failed to generate document. Please try again later.');
+      setError(err instanceof Error ? err.message : 'Failed to generate document. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -165,12 +181,12 @@ export default function DocumentGenerator() {
     return (
       <div className="text-center py-12">
         <p className="text-gray-200 mb-4">Please sign in to generate documents.</p>
-        <button
+        <Button
           onClick={() => router.push('/auth/signin')}
           className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
         >
           Sign In
-        </button>
+        </Button>
       </div>
     );
   }
@@ -200,6 +216,7 @@ export default function DocumentGenerator() {
               placeholder="Enter a title for your document"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              disabled={isLoading}
             />
           </div>
 
@@ -208,6 +225,7 @@ export default function DocumentGenerator() {
             <Select
               value={selectedType}
               onValueChange={(value) => setSelectedType(value as DocumentType)}
+              disabled={isLoading}
             >
               <SelectTrigger id="document-type">
                 <SelectValue placeholder="Select Document Type" />
@@ -234,6 +252,7 @@ export default function DocumentGenerator() {
                     value={parameters[field.key] || ''}
                     onChange={(e) => handleParamChange(field.key, e.target.value)}
                     className="min-h-[100px]"
+                    disabled={isLoading}
                   />
                 ) : (
                   <Input
@@ -241,6 +260,7 @@ export default function DocumentGenerator() {
                     placeholder={`Enter ${field.label}`}
                     value={parameters[field.key] || ''}
                     onChange={(e) => handleParamChange(field.key, e.target.value)}
+                    disabled={isLoading}
                   />
                 )}
               </div>

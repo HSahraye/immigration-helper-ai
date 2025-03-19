@@ -1,7 +1,23 @@
 import { prisma } from '../prisma';
-import { UsageType } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth';
+
+// Define the enums locally since they're not exported by Prisma
+export enum UsageType {
+  CHAT_MESSAGE = 'CHAT_MESSAGE',
+  DOCUMENT_ANALYSIS = 'DOCUMENT_ANALYSIS',
+  DOCUMENT_GENERATION = 'DOCUMENT_GENERATION',
+  AI_FEATURE_ACCESS = 'AI_FEATURE_ACCESS'
+}
+
+export enum SubscriptionStatus {
+  ACTIVE = 'ACTIVE',
+  CANCELED = 'CANCELED',
+  PAST_DUE = 'PAST_DUE',
+  UNPAID = 'UNPAID',
+  TRIALING = 'TRIALING'
+}
 
 // Default limits for free users
 const FREE_TIER_LIMITS: Record<UsageType, number> = {
@@ -18,6 +34,7 @@ export type UserWithSubscription = {
     id: string;
     status: string;
     plan: {
+      id: string;
       name: string;
     };
   } | null;
@@ -76,7 +93,7 @@ export async function getTodayUsage(userId: string, type: UsageType) {
  */
 export async function hasExceededLimit(userId: string, type: UsageType): Promise<boolean> {
   try {
-    // Get the user with their subscription
+    // Get the user with their subscription and plan
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -91,10 +108,11 @@ export async function hasExceededLimit(userId: string, type: UsageType): Promise
     // If no user found, they're unauthorized
     if (!user) return true;
 
-    // If user has an active subscription, they have unlimited access
+    // If user has an active subscription with a valid plan, they have unlimited access
     if (
       user.subscription && 
       user.subscription.status === 'ACTIVE' && 
+      user.subscription.plan &&
       ['Basic', 'Professional', 'Enterprise'].includes(user.subscription.plan.name)
     ) {
       return false;
@@ -206,237 +224,129 @@ export async function canAccessPremiumFeature(type: UsageType) {
   }
 }
 
-export class UsageService {
+type ResourceType = 'DOCUMENT_GENERATION' | 'DOCUMENT_ANALYSIS' | 'CHAT';
+
+class UsageService {
   /**
-   * Track usage of a specific feature for a user
+   * Check the user's subscription status
    */
-  async trackUsage(userId: string, type: UsageType, count: number = 1): Promise<void> {
-    try {
-      // Create new usage record
-      await prisma.usageRecord.create({
-        data: {
-          userId,
-          type,
-          count,
-          date: new Date(),
-        },
-      });
-    } catch (error) {
-      console.error(`Error tracking usage for user ${userId}:`, error);
-      throw new Error('Failed to track usage');
+  async checkSubscriptionStatus(userId: string): Promise<SubscriptionStatus> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { 
+        subscription: {
+          include: {
+            plan: true
+          }
+        } 
+      },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
     }
+
+    if (!user.subscription || !user.subscription.plan) {
+      return SubscriptionStatus.UNPAID;
+    }
+
+    const now = new Date();
+    const subscriptionEndDate = new Date(user.subscription.currentPeriodEnd);
+
+    if (now > subscriptionEndDate || user.subscription.status !== 'ACTIVE') {
+      return SubscriptionStatus.UNPAID;
+    }
+
+    // Check plan name from the Plan model
+    const planName = user.subscription.plan.name.toUpperCase();
+    if (planName === 'PRO' || planName === 'PROFESSIONAL') {
+      return SubscriptionStatus.ACTIVE;
+    } else if (planName === 'ENTERPRISE') {
+      return SubscriptionStatus.ACTIVE;
+    }
+    return SubscriptionStatus.UNPAID;
   }
 
   /**
-   * Check if a user has access to a resource based on usage limits
+   * Check if the user has access to a resource based on their usage
    */
   async checkResourceAccess(
     userId: string,
     type: UsageType,
-    limit: number,
-    period: 'day' | 'week' | 'month' = 'day'
+    limit: number
   ): Promise<boolean> {
-    try {
-      // Get subscription status
-      const subscriptionStatus = await this.checkSubscriptionStatus(userId);
-      
-      // Premium users have unlimited access
-      if (subscriptionStatus !== 'FREE') {
-        return true;
-      }
-
-      // Set date range based on period
-      const now = new Date();
-      let startDate = new Date();
-      
-      if (period === 'day') {
-        startDate.setHours(0, 0, 0, 0);
-      } else if (period === 'week') {
-        const day = startDate.getDay();
-        const diff = startDate.getDate() - day + (day === 0 ? -6 : 1);
-        startDate = new Date(startDate.setDate(diff));
-        startDate.setHours(0, 0, 0, 0);
-      } else if (period === 'month') {
-        startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-      }
-
-      // Count usage for the specified period
-      const usageRecords = await prisma.usageRecord.findMany({
-        where: {
-          userId,
-          type,
-          date: {
-            gte: startDate,
-            lte: now,
-          },
-        },
-      });
-
-      // Calculate total usage
-      const totalUsage = usageRecords.reduce((total, record) => total + record.count, 0);
-      
-      // Check if user is within limits
-      return totalUsage < limit;
-    } catch (error) {
-      console.error(`Error checking resource access for user ${userId}:`, error);
-      // Default to allowed if there's an error to avoid blocking users
+    // First check subscription status
+    const subscriptionStatus = await this.checkSubscriptionStatus(userId);
+    
+    // Active subscriptions have unlimited access
+    if (subscriptionStatus === SubscriptionStatus.ACTIVE) {
       return true;
     }
+
+    // For unpaid/free users, check usage limits
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const usageCount = await prisma.usageRecord.count({
+      where: {
+        userId,
+        type,
+        date: {
+          gte: today,
+        },
+      },
+    });
+
+    return usageCount < limit;
   }
 
   /**
-   * Check the user's subscription status
+   * Track usage of a resource
    */
-  async checkSubscriptionStatus(userId: string): Promise<'FREE' | 'BASIC' | 'PROFESSIONAL' | 'ENTERPRISE'> {
-    try {
-      const subscription = await prisma.subscription.findUnique({
-        where: { userId },
-        include: { plan: true },
-      });
-
-      if (!subscription || subscription.status !== 'ACTIVE') {
-        return 'FREE';
-      }
-
-      // Return plan name as subscription tier
-      const planName = subscription.plan.name.toUpperCase();
-      
-      if (planName.includes('BASIC')) {
-        return 'BASIC';
-      } else if (planName.includes('PROFESSIONAL') || planName.includes('PRO')) {
-        return 'PROFESSIONAL';
-      } else if (planName.includes('ENTERPRISE')) {
-        return 'ENTERPRISE';
-      }
-      
-      return 'FREE';
-    } catch (error) {
-      console.error(`Error checking subscription status for user ${userId}:`, error);
-      // Default to free tier if there's an error
-      return 'FREE';
-    }
+  async trackUsage(userId: string, type: UsageType): Promise<void> {
+    await prisma.usageRecord.create({
+      data: {
+        userId,
+        type,
+        count: 1,
+      },
+    });
   }
 
   /**
    * Get usage statistics for a user
    */
-  async getUserUsageStats(userId: string): Promise<Record<UsageType, number>> {
-    try {
-      // Get current month's usage
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
+  async getUsageStats(userId: string) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-      // Get all usage types
-      const usageTypes = Object.values(UsageType);
-      
-      // Initialize stats with 0 for all types
-      const stats: Partial<Record<UsageType, number>> = {};
-      usageTypes.forEach(type => {
-        stats[type] = 0;
-      });
-
-      // Get usage records for current month
-      const usageRecords = await prisma.usageRecord.findMany({
-        where: {
-          userId,
-          date: {
-            gte: startOfMonth,
-          },
+    const usage = await prisma.usageRecord.groupBy({
+      by: ['type'],
+      where: {
+        userId,
+        date: {
+          gte: today,
         },
-      });
+      },
+      _sum: {
+        count: true,
+      },
+    });
 
-      // Calculate usage per type
-      usageRecords.forEach(record => {
-        stats[record.type] = (stats[record.type] || 0) + record.count;
-      });
-
-      return stats as Record<UsageType, number>;
-    } catch (error) {
-      console.error(`Error getting usage stats for user ${userId}:`, error);
-      throw new Error('Failed to get usage statistics');
-    }
+    return usage.reduce((acc, curr) => {
+      acc[curr.type] = curr._sum.count || 0;
+      return acc;
+    }, {} as Record<UsageType, number>);
   }
 
   /**
-   * Get subscription details for a user
+   * Reset usage statistics for a user
    */
-  async getUserSubscriptionDetails(userId: string) {
-    try {
-      const subscription = await prisma.subscription.findUnique({
-        where: { userId },
-        include: { plan: true },
-      });
-
-      if (!subscription) {
-        return {
-          tier: 'FREE',
-          features: ['Basic chat access', '5 chats per day', 'Limited document generation'],
-          limits: {
-            chatMessages: 5,
-            documentGeneration: 3,
-            documentAnalysis: 2,
-          }
-        };
-      }
-
-      // Return appropriate limits based on plan
-      const planName = subscription.plan.name.toUpperCase();
-      
-      if (planName.includes('BASIC')) {
-        return {
-          tier: 'BASIC',
-          status: subscription.status,
-          renewalDate: subscription.currentPeriodEnd,
-          features: subscription.plan.features,
-          limits: {
-            chatMessages: 50,
-            documentGeneration: 10,
-            documentAnalysis: 5
-          }
-        };
-      } else if (planName.includes('PROFESSIONAL') || planName.includes('PRO')) {
-        return {
-          tier: 'PROFESSIONAL',
-          status: subscription.status,
-          renewalDate: subscription.currentPeriodEnd,
-          features: subscription.plan.features,
-          limits: {
-            chatMessages: 500,
-            documentGeneration: 50,
-            documentAnalysis: 50
-          }
-        };
-      } else if (planName.includes('ENTERPRISE')) {
-        return {
-          tier: 'ENTERPRISE',
-          status: subscription.status,
-          renewalDate: subscription.currentPeriodEnd,
-          features: subscription.plan.features,
-          limits: {
-            chatMessages: 'Unlimited',
-            documentGeneration: 'Unlimited',
-            documentAnalysis: 'Unlimited'
-          }
-        };
-      }
-      
-      // Default free tier
-      return {
-        tier: 'FREE',
-        features: ['Basic chat access', '5 chats per day', 'Limited document generation'],
-        limits: {
-          chatMessages: 5,
-          documentGeneration: 3,
-          documentAnalysis: 2
-        }
-      };
-    } catch (error) {
-      console.error(`Error getting subscription details for user ${userId}:`, error);
-      throw new Error('Failed to get subscription details');
-    }
+  async resetUsage(userId: string): Promise<void> {
+    await prisma.usageRecord.deleteMany({
+      where: { userId },
+    });
   }
 }
 
-// Singleton instance
 export const usageService = new UsageService(); 

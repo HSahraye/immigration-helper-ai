@@ -39,18 +39,18 @@ model User {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -82,21 +82,19 @@ model Plan {
 
 // User Subscriptions
 model Subscription {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  planId          String
-  status          SubscriptionStatus @default(ACTIVE)
-  stripeCustomerId String?
-  stripeSubscriptionId String?
-  currentPeriodStart DateTime
+  id                String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId           String   // Reference to Plan
+  plan             Plan     @relation(fields: [planId], references: [id])
+  status           String   @default("ACTIVE")
+  stripeCustomerId String?  @unique
+  stripeSubscriptionId String? @unique
+  stripePriceId    String?
+  currentPeriodStart DateTime @default(now())
   currentPeriodEnd   DateTime
-  cancelAtPeriodEnd  Boolean @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-
-  // Relations
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plan            Plan     @relation(fields: [planId], references: [id])
 }
 
 // Usage Tracking

@@ -16,11 +16,14 @@ const CHAT_LIMIT = 20;
 const CHAT_COUNT_KEY = 'chatCount';
 
 export function ChatLimitProvider({ children }: { children: React.ReactNode }) {
-  const { data: session } = useSession();
+  const session = useSession();
   const [chatCount, setChatCount] = useState<number>(0);
 
   useEffect(() => {
-    if (!session) {
+    // Only proceed if session status is not loading
+    if (session.status === 'loading') return;
+
+    if (!session.data) {
       // Load chat count from localStorage for non-authenticated users
       const storedCount = localStorage.getItem(CHAT_COUNT_KEY);
       setChatCount(storedCount ? parseInt(storedCount, 10) : 0);
@@ -29,10 +32,10 @@ export function ChatLimitProvider({ children }: { children: React.ReactNode }) {
       setChatCount(0);
       localStorage.removeItem(CHAT_COUNT_KEY);
     }
-  }, [session]);
+  }, [session.status, session.data]);
 
   const incrementChatCount = () => {
-    if (!session) {
+    if (!session.data) {
       const newCount = chatCount + 1;
       setChatCount(newCount);
       localStorage.setItem(CHAT_COUNT_KEY, newCount.toString());
@@ -46,7 +49,7 @@ export function ChatLimitProvider({ children }: { children: React.ReactNode }) {
 
   const value = {
     remainingChats: CHAT_LIMIT - chatCount,
-    isLimitReached: !session && chatCount >= CHAT_LIMIT,
+    isLimitReached: !session.data && chatCount >= CHAT_LIMIT,
     incrementChatCount,
     resetChatCount,
   };

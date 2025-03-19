@@ -90,7 +90,7 @@ const TEMPLATE_FIELDS: Record<DocumentType, Array<{ key: string; label: string; 
 
 export default function DocumentGenerator() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const session = useSession();
   
   const [selectedType, setSelectedType] = useState<DocumentType>('VISA_APPLICATION');
   const [title, setTitle] = useState('');
@@ -131,8 +131,8 @@ export default function DocumentGenerator() {
       return;
     }
 
-    if (!session?.user?.id) {
-      setError('You must be logged in to generate documents');
+    if (session.status !== 'authenticated' || !session.data?.user?.id) {
+      router.push('/auth/signin');
       return;
     }
 
@@ -140,7 +140,7 @@ export default function DocumentGenerator() {
     setError('');
 
     try {
-      await generateDocument(session.user.id, selectedType, title, parameters);
+      await generateDocument(session.data.user.id, selectedType, title, parameters);
       // Redirect to documents list page
       router.push('/documents');
     } catch (err) {
@@ -150,6 +150,30 @@ export default function DocumentGenerator() {
       setIsLoading(false);
     }
   };
+
+  // Show loading state while session is loading
+  if (session.status === 'loading') {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (session.status === 'unauthenticated') {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-200 mb-4">Please sign in to generate documents.</p>
+        <button
+          onClick={() => router.push('/auth/signin')}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto">

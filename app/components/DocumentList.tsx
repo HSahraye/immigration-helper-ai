@@ -37,7 +37,7 @@ interface Document {
 
 export default function DocumentList() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const session = useSession();
   
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,10 +48,12 @@ export default function DocumentList() {
   // Fetch documents on load
   useEffect(() => {
     const fetchDocuments = async () => {
-      if (session?.user?.id) {
+      if (session.status === 'loading') return;
+      
+      if (session.data?.user?.id) {
         try {
           setIsLoading(true);
-          const docs = await getUserDocuments(session.user.id);
+          const docs = await getUserDocuments(session.data.user.id);
           setDocuments(docs.map(doc => ({
             ...doc,
             createdAt: doc.createdAt.toString(),
@@ -63,17 +65,19 @@ export default function DocumentList() {
         } finally {
           setIsLoading(false);
         }
+      } else {
+        setIsLoading(false);
       }
     };
 
     fetchDocuments();
-  }, [session]);
+  }, [session.status, session.data]);
 
   const handleDelete = async () => {
-    if (!documentToDelete || !session?.user?.id) return;
+    if (!documentToDelete || !session.data?.user?.id) return;
 
     try {
-      const success = await deleteDocument(documentToDelete, session.user.id);
+      const success = await deleteDocument(documentToDelete, session.data.user.id);
       if (success) {
         setDocuments(documents.filter(doc => doc.id !== documentToDelete));
       } else {
@@ -92,6 +96,30 @@ export default function DocumentList() {
     setDocumentToDelete(id);
     setIsDeleteOpen(true);
   };
+
+  // Show loading state
+  if (session.status === 'loading' || isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (session.status === 'unauthenticated') {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-200 mb-4">Please sign in to view your documents.</p>
+        <button
+          onClick={() => router.push('/auth/signin')}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
 
   // Document type display names
   const documentTypeDisplay = {
@@ -126,11 +154,7 @@ export default function DocumentList() {
         </Alert>
       )}
 
-      {isLoading ? (
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      ) : documents.length === 0 ? (
+      {documents.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <FileText className="h-12 w-12 text-gray-400 mb-4" />

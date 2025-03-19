@@ -44,7 +44,7 @@ interface DocumentDetailsProps {
 
 export default function DocumentDetails({ documentId }: DocumentDetailsProps) {
   const router = useRouter();
-  const { data: session } = useSession();
+  const session = useSession();
   
   const [document, setDocument] = useState<Document | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,11 +53,16 @@ export default function DocumentDetails({ documentId }: DocumentDetailsProps) {
 
   useEffect(() => {
     const fetchDocument = async () => {
-      if (!session?.user?.id) return;
+      if (session.status === 'loading') return;
+      
+      if (!session.data?.user?.id) {
+        router.push('/auth/signin');
+        return;
+      }
       
       try {
         setIsLoading(true);
-        const doc = await getDocument(documentId, session.user.id);
+        const doc = await getDocument(documentId, session.data.user.id);
         // Convert Date objects to ISO strings
         setDocument({
           ...doc,
@@ -73,13 +78,13 @@ export default function DocumentDetails({ documentId }: DocumentDetailsProps) {
     };
 
     fetchDocument();
-  }, [documentId, session]);
+  }, [documentId, session.status, session.data, router]);
 
   const handleDelete = async () => {
-    if (!document || !session?.user?.id) return;
+    if (!document || !session.data?.user?.id) return;
 
     try {
-      const success = await deleteDocument(document.id, session.user.id);
+      const success = await deleteDocument(document.id, session.data.user.id);
       if (success) {
         router.push('/documents');
       } else {
@@ -98,10 +103,10 @@ export default function DocumentDetails({ documentId }: DocumentDetailsProps) {
   };
 
   const handleStatusChange = async (status: DocumentStatus) => {
-    if (!document || !session?.user?.id) return;
+    if (!document || !session.data?.user?.id) return;
 
     try {
-      const updatedDoc = await updateDocument(document.id, session.user.id, { status });
+      const updatedDoc = await updateDocument(document.id, session.data.user.id, { status });
       // Convert Date objects to ISO strings
       setDocument(prev => prev ? {
         ...prev,
@@ -142,10 +147,26 @@ export default function DocumentDetails({ documentId }: DocumentDetailsProps) {
     ARCHIVED: 'secondary',
   };
 
-  if (isLoading) {
+  // Show loading state while session is loading
+  if (session.status === 'loading' || isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (session.status === 'unauthenticated') {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-200 mb-4">Please sign in to view document details.</p>
+        <button
+          onClick={() => router.push('/auth/signin')}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
+        >
+          Sign In
+        </button>
       </div>
     );
   }

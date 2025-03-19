@@ -39,6 +39,17 @@ const nextConfig = {
 
     return config;
   },
+  // API route configuration
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: '/api/:path*',
+      },
+    ];
+  },
+  // Skip API routes during static export
+  output: 'standalone',
 }
 
 export default nextConfig 

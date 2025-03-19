@@ -14,7 +14,7 @@ const app = next({
   port,
   conf: {
     experimental: {
-      appDir: true,
+      appDir: false,
       disableStaticGeneration: true,
       serverComponents: false,
     },

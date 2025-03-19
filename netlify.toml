@@ -1,10 +1,10 @@
 [build]
-  command = "npm install dotenv && npx prisma generate && NEXT_DISABLE_PRERENDERING=1 DISABLE_SERVER_COMPONENTS=1 npm run netlify-build"
+  command = "npm ci && npx prisma generate && npm run build"
   publish = ".next"
-  node_version = "14"
+  node_version = "16"
 
 [build.environment]
-  NODE_VERSION = "20.10.0"
+  NODE_VERSION = "16"
   NPM_FLAGS = "--legacy-peer-deps"
   # EXTREME MEASURES TO BYPASS NEXTJS STATIC GENERATION
   NEXT_DISABLE_PRERENDERING = "1"

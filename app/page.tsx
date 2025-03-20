@@ -1,63 +1,61 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import Link from 'next/link';
+import { PageHero } from './components/aceternity-ui/PageHero';
+import { FeatureCard } from './components/aceternity-ui/FeatureCard';
+import { TestimonialCard } from './components/aceternity-ui/TestimonialCard';
+import { PricingCard } from './components/aceternity-ui/PricingCard';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#202124] text-gray-200">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-            Welcome to Immigration Helper AI
-          </h1>
-          <p className="text-xl mb-12 max-w-2xl mx-auto">
-            Your intelligent assistant for immigration-related questions and document analysis. Powered by advanced AI to simplify your immigration journey.
-          </p>
-          <div className="flex justify-center gap-4">
-            <a 
-              href="/resources" 
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all"
-            >
-              Get Started
-            </a>
-            <a 
-              href="#features" 
-              className="border border-gray-600 hover:border-blue-500 px-8 py-3 rounded-lg font-semibold transition-all"
-            >
-              Learn More
-            </a>
-          </div>
+      <PageHero
+        title="Welcome to Immigration Helper AI"
+        description="Your intelligent assistant for immigration-related questions and document analysis. Powered by advanced AI to simplify your immigration journey."
+      >
+        <div className="flex justify-center gap-4">
+          <a 
+            href="/resources" 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all"
+          >
+            Get Started
+          </a>
+          <a 
+            href="#features" 
+            className="border border-gray-600 hover:border-blue-500 px-8 py-3 rounded-lg font-semibold transition-all"
+          >
+            Learn More
+          </a>
         </div>
+      </PageHero>
 
-        {/* Features Section */}
+      {/* Features Section */}
+      <div className="container mx-auto px-4">
         <div id="features" className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-          <div className="bg-[#303134] p-8 rounded-lg transform transition-all hover:scale-105 hover:shadow-xl border border-gray-700">
-            <div className="text-blue-400 text-4xl mb-4">📄</div>
-            <h2 className="text-2xl font-semibold mb-4">Document Analysis</h2>
-            <p className="mb-4 text-gray-400">Upload your immigration documents for AI-powered analysis and insights.</p>
-            <Link href="/documents" className="text-blue-400 hover:text-blue-300 flex items-center">
-              Get Started <span className="ml-2">→</span>
-            </Link>
-          </div>
+          <FeatureCard
+            icon={<div className="text-4xl">📄</div>}
+            title="Document Analysis"
+            description="Upload your immigration documents for AI-powered analysis and insights."
+            link="/documents"
+            linkText="Get Started"
+          />
           
-          <div className="bg-[#303134] p-8 rounded-lg transform transition-all hover:scale-105 hover:shadow-xl border border-gray-700">
-            <div className="text-blue-400 text-4xl mb-4">💬</div>
-            <h2 className="text-2xl font-semibold mb-4">AI Chat Assistant</h2>
-            <p className="mb-4 text-gray-400">Get instant answers to your immigration-related questions.</p>
-            <Link href="/chat" className="text-blue-400 hover:text-blue-300 flex items-center">
-              Start Chatting <span className="ml-2">→</span>
-            </Link>
-          </div>
+          <FeatureCard
+            icon={<div className="text-4xl">💬</div>}
+            title="AI Chat Assistant"
+            description="Get instant answers to your immigration-related questions."
+            link="/chat"
+            linkText="Start Chatting"
+          />
           
-          <div className="bg-[#303134] p-8 rounded-lg transform transition-all hover:scale-105 hover:shadow-xl border border-gray-700">
-            <div className="text-blue-400 text-4xl mb-4">📚</div>
-            <h2 className="text-2xl font-semibold mb-4">Resource Library</h2>
-            <p className="mb-4 text-gray-400">Access comprehensive immigration guides and resources.</p>
-            <Link href="/resources" className="text-blue-400 hover:text-blue-300 flex items-center">
-              Browse Resources <span className="ml-2">→</span>
-            </Link>
-          </div>
+          <FeatureCard
+            icon={<div className="text-4xl">📚</div>}
+            title="Resource Library"
+            description="Access comprehensive guides and resources for various immigration processes."
+            link="/resources"
+            linkText="Browse Resources"
+          />
         </div>
 
         {/* Stats Section */}
@@ -86,30 +84,21 @@ export default function HomePage() {
         <div className="mb-20">
           <h2 className="text-3xl font-bold text-center mb-12">What Our Users Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-[#303134] p-8 rounded-lg border border-gray-700">
-              <div className="flex items-center mb-4">
-                <div className="text-yellow-400">★★★★★</div>
-              </div>
-              <p className="text-gray-400 mb-4">"The AI assistant made my visa application process so much easier. Highly recommended!"</p>
-              <div className="font-semibold">Sarah K.</div>
-              <div className="text-sm text-gray-500">Student Visa Applicant</div>
-            </div>
-            <div className="bg-[#303134] p-8 rounded-lg border border-gray-700">
-              <div className="flex items-center mb-4">
-                <div className="text-yellow-400">★★★★★</div>
-              </div>
-              <p className="text-gray-400 mb-4">"Incredible tool for document analysis. Saved me hours of work and stress."</p>
-              <div className="font-semibold">Michael R.</div>
-              <div className="text-sm text-gray-500">Business Immigration</div>
-            </div>
-            <div className="bg-[#303134] p-8 rounded-lg border border-gray-700">
-              <div className="flex items-center mb-4">
-                <div className="text-yellow-400">★★★★★</div>
-              </div>
-              <p className="text-gray-400 mb-4">"The resource library is comprehensive and the AI chat support is exceptional."</p>
-              <div className="font-semibold">Lisa M.</div>
-              <div className="text-sm text-gray-500">Family Sponsorship</div>
-            </div>
+            <TestimonialCard
+              quote="The AI assistant made my visa application process so much easier. Highly recommended!"
+              author="Sarah K."
+              role="Student Visa Applicant"
+            />
+            <TestimonialCard
+              quote="Incredible tool for document analysis. Saved me hours of work and stress."
+              author="Michael R."
+              role="Business Immigration"
+            />
+            <TestimonialCard
+              quote="The resource library is comprehensive and the AI chat support is exceptional."
+              author="Lisa M."
+              role="Family Sponsorship"
+            />
           </div>
         </div>
 
@@ -123,88 +112,50 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto">
-              {/* Basic Plan */}
-              <div className="bg-[#303134] p-8 rounded-lg flex-1">
-                <h3 className="text-2xl font-semibold mb-4">Basic</h3>
-                <p className="text-3xl font-bold mb-6">Free</p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Basic document analysis
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Limited chat assistance
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Access to basic resources
-                  </li>
-                </ul>
-                <Link href="/checkout?plan=basic" 
-                  className="block text-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                  Get Started
-                </Link>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              <div className="md:pt-8">
+                <PricingCard
+                  title="Basic"
+                  price="Free"
+                  features={[
+                    { text: "Basic document analysis" },
+                    { text: "Limited chat assistance" },
+                    { text: "Access to basic resources" }
+                  ]}
+                  buttonText="Get Started"
+                  buttonLink="/checkout?plan=basic"
+                />
               </div>
 
-              {/* Pro Plan */}
-              <div className="bg-[#303134] p-8 rounded-lg border-2 border-blue-500 transform scale-105 relative z-20 shadow-xl">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                  Most Popular
-                </div>
-                <h3 className="text-2xl font-semibold mb-4">Pro</h3>
-                <p className="text-3xl font-bold mb-6">$19.99<span className="text-lg">/month</span></p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Advanced document analysis
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Unlimited chat assistance
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Priority support
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Full resource access
-                  </li>
-                </ul>
-                <Link href="/checkout?plan=pro" 
-                  className="block text-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                  Subscribe Now
-                </Link>
+              <div className="md:-mt-4">
+                <PricingCard
+                  title="Pro"
+                  price="$19.99/month"
+                  features={[
+                    { text: "Advanced document analysis" },
+                    { text: "Unlimited chat assistance" },
+                    { text: "Priority support" },
+                    { text: "Full resource access" }
+                  ]}
+                  buttonText="Subscribe Now"
+                  buttonLink="/checkout?plan=pro"
+                  isPopular={true}
+                />
               </div>
 
-              {/* Enterprise Plan */}
-              <div className="bg-[#303134] p-8 rounded-lg flex-1">
-                <h3 className="text-2xl font-semibold mb-4">Enterprise</h3>
-                <p className="text-3xl font-bold mb-6">Custom</p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Custom document analysis
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Dedicated support team
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Custom integrations
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Volume discounts
-                  </li>
-                </ul>
-                <Link href="/enterprise" 
-                  className="block text-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                  Contact Sales
-                </Link>
+              <div className="md:pt-8">
+                <PricingCard
+                  title="Enterprise"
+                  price="Custom"
+                  features={[
+                    { text: "Custom document analysis" },
+                    { text: "Dedicated support team" },
+                    { text: "Custom integrations" },
+                    { text: "Volume discounts" }
+                  ]}
+                  buttonText="Contact Sales"
+                  buttonLink="/enterprise"
+                />
               </div>
             </div>
           </div>

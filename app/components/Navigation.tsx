@@ -12,7 +12,7 @@ export default function Navigation() {
   // Handle loading state
   if (status === 'loading') {
     return (
-      <nav className="bg-[#202124] text-gray-200 sticky top-0 z-50 shadow-md">
+      <nav className="bg-black text-white sticky top-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
@@ -31,7 +31,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-[#202124] text-gray-200 sticky top-0 z-50 shadow-md">
+    <nav className="bg-black text-white sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -42,24 +42,24 @@ export default function Navigation() {
           
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
-              <Link href="/" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
+              <Link href="/" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
                 Home
               </Link>
-              <Link href="/resources" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
+              <Link href="/resources" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
                 Resources
               </Link>
-              <Link href="/chat" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
+              <Link href="/chat" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
                 Chat
               </Link>
-              <Link href="/documents" className="hover:text-blue-400 px-3 py-2 rounded-md font-medium">
+              <Link href="/documents" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
                 Documents
               </Link>
               {session?.user ? (
-                <Link href="/account" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
+                <Link href="/account" className="bg-white text-black px-4 py-2 rounded-full font-medium transition-colors hover:bg-gray-200">
                   {session.user.name || session.user.email?.split('@')[0]}
                 </Link>
               ) : (
-                <Link href="/auth/signin" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-colors">
+                <Link href="/auth/signin" className="bg-white text-black px-4 py-2 rounded-full font-medium transition-colors hover:bg-gray-200">
                   Sign In
                 </Link>
               )}
@@ -78,7 +78,7 @@ export default function Navigation() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-1 text-gray-200 hover:text-white focus:outline-none"
+              className="p-1 text-white hover:text-gray-300 focus:outline-none"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -93,17 +93,17 @@ export default function Navigation() {
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-[#303134] border-t border-gray-700">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black border-t border-white">
             <Link
               href="/"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
               onClick={() => setIsMenuOpen(false)}
             >
               Home
             </Link>
             <Link
               href="/resources"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
               onClick={() => setIsMenuOpen(false)}
             >
               Resources
@@ -111,7 +111,7 @@ export default function Navigation() {
             {!session?.user && (
               <Link
                 href="/auth/signin"
-                className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-blue-400"
+                className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sign In
@@ -119,14 +119,14 @@ export default function Navigation() {
             )}
             <Link
               href="/chat"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
               onClick={() => setIsMenuOpen(false)}
             >
               Chat
             </Link>
             <Link
               href="/documents"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148]"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
               onClick={() => setIsMenuOpen(false)}
             >
               Documents
@@ -135,13 +135,13 @@ export default function Navigation() {
               <>
                 <Link
                   href="/account"
-                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-blue-400"
+                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   My Account
                 </Link>
                 <button
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-[#404148] text-red-400"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
                   onClick={handleLogout}
                 >
                   Sign Out

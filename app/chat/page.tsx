@@ -11,17 +11,17 @@ export const metadata: Metadata = {
 
 export default function ChatPage() {
   return (
-    <div className="min-h-screen bg-[#202124] text-gray-200 flex flex-col">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       <div className="container mx-auto px-4 py-8 md:py-16 flex-1 flex flex-col">
         <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col">
           <div className="text-center mb-6 md:mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-3 md:mb-6">AI Chat Assistant</h1>
-            <p className="text-lg md:text-xl text-gray-400">
+            <p className="text-lg md:text-xl text-white">
               Get instant answers to your immigration-related questions.
             </p>
           </div>
 
-          <div className="bg-[#303134] rounded-lg border border-gray-700 overflow-hidden flex-1 flex flex-col min-h-[500px]">
+          <div className="bg-black rounded-lg border border-white overflow-hidden flex-1 flex flex-col min-h-[500px]">
             <ChatInterface />
           </div>
         </div>

@@ -21,7 +21,7 @@ export function ResourceCard({
 }: ResourceCardProps) {
   return (
     <CardContainer>
-      <CardBody className="bg-[#303134] relative group/card hover:shadow-2xl hover:shadow-emerald-500/[0.1] border border-gray-700 w-full h-full rounded-lg p-8">
+      <CardBody className="bg-black relative group/card hover:shadow-2xl hover:shadow-white/[0.1] border border-white w-full h-full rounded-lg p-8">
         <CardItem
           translateZ="50"
           className={`w-12 h-12 rounded-lg flex items-center justify-center ${color}`}
@@ -30,13 +30,13 @@ export function ResourceCard({
         </CardItem>
         <CardItem
           translateZ="60"
-          className="text-xl font-semibold mt-4 mb-2 text-gray-200"
+          className="text-xl font-semibold mt-4 mb-2 text-white"
         >
           {title}
         </CardItem>
         <CardItem
           translateZ="80"
-          className="text-gray-400 text-sm mb-8"
+          className="text-white text-sm mb-8"
         >
           {description}
         </CardItem>
@@ -44,7 +44,7 @@ export function ResourceCard({
           as={Link}
           href={path}
           translateZ="100"
-          className="text-sm text-emerald-500 flex items-center gap-2 hover:text-emerald-400 transition-colors"
+          className="text-sm text-white flex items-center gap-2 hover:text-gray-300 transition-colors"
         >
           Learn more
           <svg

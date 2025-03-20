@@ -17,8 +17,8 @@ export default function ClientProviders({
     <SessionProvider>
       <ChatLimitProvider>
         <Suspense fallback={
-          <div className="min-h-screen bg-[#202124] text-gray-200 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="min-h-screen bg-black text-white flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
           </div>
         }>
           {children}

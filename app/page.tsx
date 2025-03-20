@@ -8,7 +8,7 @@ import { PricingCard } from './components/aceternity-ui/PricingCard';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#202124] text-gray-200">
+    <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
       <PageHero
         title="Welcome to Immigration Helper AI"
@@ -17,13 +17,13 @@ export default function HomePage() {
         <div className="flex justify-center gap-4">
           <a 
             href="/resources" 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all"
+            className="bg-white text-black px-8 py-3 rounded-lg font-semibold transition-all hover:bg-gray-200"
           >
             Get Started
           </a>
           <a 
             href="#features" 
-            className="border border-gray-600 hover:border-blue-500 px-8 py-3 rounded-lg font-semibold transition-all"
+            className="border border-white hover:border-gray-300 px-8 py-3 rounded-lg font-semibold transition-all"
           >
             Learn More
           </a>
@@ -59,23 +59,23 @@ export default function HomePage() {
         </div>
 
         {/* Stats Section */}
-        <div className="bg-[#303134] rounded-xl p-12 mb-20">
+        <div className="bg-black rounded-xl p-12 mb-20 border border-white">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-blue-400 mb-2">10,000+</div>
-              <div className="text-gray-400">Documents Analyzed</div>
+              <div className="text-3xl font-bold text-white mb-2">10,000+</div>
+              <div className="text-white">Documents Analyzed</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-blue-400 mb-2">95%</div>
-              <div className="text-gray-400">Success Rate</div>
+              <div className="text-3xl font-bold text-white mb-2">95%</div>
+              <div className="text-white">Success Rate</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-blue-400 mb-2">24/7</div>
-              <div className="text-gray-400">AI Support</div>
+              <div className="text-3xl font-bold text-white mb-2">24/7</div>
+              <div className="text-white">AI Support</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-blue-400 mb-2">50+</div>
-              <div className="text-gray-400">Countries Served</div>
+              <div className="text-3xl font-bold text-white mb-2">50+</div>
+              <div className="text-white">Countries Served</div>
             </div>
           </div>
         </div>
@@ -103,11 +103,11 @@ export default function HomePage() {
         </div>
 
         {/* Pricing section */}
-        <section id="pricing" className="py-20 bg-[#202124]">
+        <section id="pricing" className="py-20 bg-black">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold mb-4">Choose Your Plan</h2>
-              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              <p className="text-xl text-white max-w-3xl mx-auto">
                 Select the plan that best fits your immigration needs
               </p>
             </div>
@@ -162,12 +162,12 @@ export default function HomePage() {
         </section>
 
         {/* CTA Section */}
-        <div className="mt-20 text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-12">
+        <div className="mt-20 text-center border border-white rounded-xl p-12">
           <h2 className="text-3xl font-bold mb-6">Ready to Start Your Immigration Journey?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">Join thousands of successful applicants who have simplified their immigration process with our AI-powered platform.</p>
           <Link 
             href="/checkout?plan=pro" 
-            className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
           >
             Get Started Now
           </Link>

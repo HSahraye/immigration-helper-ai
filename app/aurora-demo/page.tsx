@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { AuroraBackgroundDemoWrapper } from '../components/aceternity-ui/AuroraBackgroundDemoWrapper';
 
 export const metadata: Metadata = {
   title: 'Aurora Background Demo - Immigration Helper AI',
@@ -6,18 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AuroraPage() {
-  return (
-    <div>
-      {/* We'll use dynamic import in the client component */}
-      <ClientAuroraDemo />
-    </div>
-  );
-}
-
-// This is a server component, so we need to use a client component to render the Aurora background
-import dynamic from 'next/dynamic';
-
-const ClientAuroraDemo = dynamic(
-  () => import('../components/aceternity-ui/AuroraBackgroundDemo').then(mod => ({ default: mod.AuroraBackgroundDemo })),
-  { ssr: false }
-); 
+  return <AuroraBackgroundDemoWrapper />;
+} 

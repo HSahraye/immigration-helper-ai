@@ -120,4 +120,15 @@ body {
 
 .animate-aurora {
   animation: aurora 60s linear infinite;
+}
+
+/* Add these at the top of the file for priority */
+html, body {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: auto !important;
+  height: auto !important;
+  min-height: 100% !important;
+  position: relative !important;
+  touch-action: pan-y !important;
 } 

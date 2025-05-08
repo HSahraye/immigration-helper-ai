@@ -48,6 +48,9 @@ export default function Navigation() {
               <Link href="/resources" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
                 Resources
               </Link>
+              <Link href="/pricing" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
+                Pricing
+              </Link>
               <Link href="/chat" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
                 Chat
               </Link>
@@ -107,6 +110,13 @@ export default function Navigation() {
               onClick={() => setIsMenuOpen(false)}
             >
               Resources
+            </Link>
+            <Link
+              href="/pricing"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Pricing
             </Link>
             {!session?.user && (
               <Link

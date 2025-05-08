@@ -8,8 +8,8 @@ import Navigation from './components/Navigation'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Immigration Helper AI',
-  description: 'Your AI-powered immigration assistant',
+  title: 'Zazu Quick Prep',
+  description: 'Your fast, AI-powered immigration assistant',
 }
 
 export default function RootLayout({

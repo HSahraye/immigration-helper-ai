@@ -4,13 +4,13 @@ import Link from 'next/link';
 
 export function PricingTable() {
   const pricingData = [
-    { service: "Green Card Applification", standardPrice: 25, rushService: 35 },
+    { service: "Green Card Application", standardPrice: 25, rushService: 35 },
     { service: "Work Permits", standardPrice: 25, rushService: 35 },
     { service: "Document Review", standardPrice: 17, rushService: 30 },
-    { service: "Graan my Cost", standardPrice: 45, rushService: 50 },
-    { service: "Citicership Applicar", standardPrice: 33, rushService: 29 },
-    { service: "Translation & Review", standardPrice: 45, rushService: 10 },
-    { service: "Diversity Visa Lottery", standardPrice: 55, rushService: 23 },
+    { service: "Family Sponsorship", standardPrice: 45, rushService: 50 },
+    { service: "Citizenship Application", standardPrice: 33, rushService: 45 },
+    { service: "Translation & Review", standardPrice: 45, rushService: 60 },
+    { service: "Diversity Visa Lottery", standardPrice: 55, rushService: 75 },
   ];
 
   return (
@@ -33,15 +33,16 @@ export function PricingTable() {
                   {item.service}
                 </td>
                 <td className="p-4 text-center border-t border-gray-700 text-lg font-medium text-white">
-                  $ {item.standardPrice}
+                  ${item.standardPrice}
                 </td>
                 <td className="p-4 text-center border-t border-gray-700 text-lg font-medium text-white">
-                  + {item.rushService}
+                  ${item.rushService}+
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <p className="text-gray-400 text-sm mt-2 italic">* The "+" indicates prices may vary depending on complexity and urgency.</p>
       </div>
       
       <div className="mt-8 flex justify-center">

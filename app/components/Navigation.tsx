@@ -16,7 +16,16 @@ export default function Navigation() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <span className="flex-shrink-0 text-xl font-bold">Immigration Helper AI</span>
+              <Link 
+                href="/" 
+                className="flex items-center">
+                <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full mr-2">
+                  <span className="text-white font-bold text-xl">Z</span>
+                </div>
+                <span className="text-xl md:text-2xl font-bold text-white">
+                  Zazu Quick Prep
+                </span>
+              </Link>
             </div>
           </div>
         </div>
@@ -35,8 +44,15 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 text-xl font-bold">
-              Immigration Helper AI
+            <Link 
+              href="/" 
+              className="flex items-center">
+              <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full mr-2">
+                <span className="text-white font-bold text-xl">Z</span>
+              </div>
+              <span className="text-xl md:text-2xl font-bold text-white">
+                Zazu Quick Prep
+              </span>
             </Link>
           </div>
           

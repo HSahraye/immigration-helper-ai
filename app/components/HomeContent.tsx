@@ -117,22 +117,24 @@ export function HomeContent() {
                       <div className="font-bold text-center">Standard</div>
                       <div className="font-bold text-center">Rush</div>
                       
-                      <div className="text-left">Green Card Applification</div>
+                      <div className="text-left">Green Card Application</div>
                       <div className="text-center">$25</div>
-                      <div className="text-center">+35</div>
+                      <div className="text-center">$35+</div>
                       
                       <div className="text-left">Work Permits</div>
                       <div className="text-center">$25</div>
-                      <div className="text-center">+35</div>
+                      <div className="text-center">$35+</div>
                       
                       <div className="text-left">Document Review</div>
                       <div className="text-center">$17</div>
-                      <div className="text-center">+30</div>
+                      <div className="text-center">$30+</div>
                       
-                      <div className="text-left">Citicership Applicar</div>
+                      <div className="text-left">Citizenship Application</div>
                       <div className="text-center">$33</div>
-                      <div className="text-center">+29</div>
+                      <div className="text-center">$45+</div>
                     </div>
+                    
+                    <p className="text-gray-400 text-sm mt-2 italic text-center">* The "+" indicates prices may vary depending on complexity and urgency.</p>
                     
                     <div className="mt-8 text-center">
                       <Link 

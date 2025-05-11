@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import { getAllUsers, isAdmin } from '@/lib/services/userService';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 
+export { dynamic } from './route.config';
+
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

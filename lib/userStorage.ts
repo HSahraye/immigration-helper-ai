@@ -1,50 +1,65 @@
 import prisma from './prisma';
-import { User } from '@prisma/client';
 import crypto from 'crypto';
 
+type User = Awaited<ReturnType<typeof prisma.user.findUnique>>;
+
 // Simple password hashing function
-export function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto
-    .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
-    .toString('hex');
-  return `${salt}:${hash}`;
+function hashPassword(password: string, salt: string): string {
+  return crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 }
 
-// Verify the password
-export function verifyPassword(storedPassword: string, suppliedPassword: string): boolean {
-  const [salt, storedHash] = storedPassword.split(':');
-  const hash = crypto
-    .pbkdf2Sync(suppliedPassword, salt, 1000, 64, 'sha512')
-    .toString('hex');
-  return storedHash === hash;
+// Generate a random salt
+function generateSalt(): string {
+  return crypto.randomBytes(16).toString('hex');
 }
 
-// Get user by email
-export async function getUserByEmail(email: string): Promise<User | null> {
+// Create a new user
+export async function createUser(email: string, password: string, name?: string): Promise<User> {
+  const salt = generateSalt();
+  const hashedPassword = hashPassword(password, salt);
+
+  return prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+      salt,
+      name,
+    },
+  });
+}
+
+// Find a user by email
+export async function findUserByEmail(email: string): Promise<User> {
   return prisma.user.findUnique({
-    where: { email }
+    where: { email },
   });
 }
 
 // Get user by ID
-export async function getUserById(id: string): Promise<User | null> {
+export async function getUserById(id: string): Promise<User> {
   return prisma.user.findUnique({
     where: { id }
   });
 }
 
-// Create a new user
-export async function createUser(name: string, email: string, password: string): Promise<User> {
-  const hashedPassword = hashPassword(password);
-  
-  return prisma.user.create({
+// Verify a user's password
+export async function verifyPassword(user: { password: string | null, salt: string | null }, password: string): Promise<boolean> {
+  if (!user.password || !user.salt) return false;
+  const hashedPassword = hashPassword(password, user.salt);
+  return hashedPassword === user.password;
+}
+
+// Update a user's password
+export async function updatePassword(userId: string, newPassword: string): Promise<User> {
+  const salt = generateSalt();
+  const hashedPassword = hashPassword(newPassword, salt);
+
+  return prisma.user.update({
+    where: { id: userId },
     data: {
-      name,
-      email,
       password: hashedPassword,
-      emailVerified: new Date(), // Set as verified for simplicity
-    }
+      salt,
+    },
   });
 }
 

@@ -1,5 +1,5 @@
 import { prisma } from '../prisma';
-import { UsageType } from '@prisma/client';
+import { UsageType } from '@/app/types/prisma';
 
 /**
  * Track a user event for analytics

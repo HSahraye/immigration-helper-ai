@@ -10,18 +10,27 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
     const isUserAdmin = await isAdmin(session.user.email);
     if (!isUserAdmin) {
-      return new NextResponse('Forbidden', { status: 403 });
+      return NextResponse.json(
+        { error: 'Forbidden' },
+        { status: 403 }
+      );
     }
 
     const users = await getAllUsers();
     return NextResponse.json(users);
   } catch (error) {
     console.error('Error in GET /api/admin/users:', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 } 

@@ -1,5 +1,5 @@
 import { AuthOptions } from 'next-auth';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { compare } from 'bcryptjs';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GitHubProvider from 'next-auth/providers/github';

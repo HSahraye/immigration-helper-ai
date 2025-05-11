@@ -4,7 +4,7 @@ const nextConfig = {
   reactStrictMode: true,
   
   // Set the output directory
-  distDir: '.next',
+  output: 'standalone',
   
   // Configure routes for App Router project
   skipTrailingSlashRedirect: true,
@@ -12,11 +12,11 @@ const nextConfig = {
   
   // Basic configuration
   images: {
-    domains: ['openai.com'],
+    domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: '**.googleusercontent.com',
       },
     ],
   },
@@ -24,7 +24,6 @@ const nextConfig = {
   // TypeScript configuration
   typescript: {
     ignoreBuildErrors: false,
-    tsconfigPath: './tsconfig.json',
   },
   
   // ESLint configuration
@@ -35,42 +34,24 @@ const nextConfig = {
   // Disable source maps
   productionBrowserSourceMaps: false,
   
+  // Compiler options
   compiler: {
-    // Support styled-components
     styledComponents: true,
-    // Remove test properties
-    reactRemoveProperties: { properties: ['^data-test'] },
   },
   
+  // Webpack configuration
   webpack: (config, { isServer }) => {
-    // Skip optimization passes
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
         net: false,
         tls: false,
-        crypto: require.resolve('crypto-browserify'),
-        stream: require.resolve('stream-browserify'),
-        buffer: require.resolve('buffer/'),
-        util: require.resolve('util/'),
-      };
+        crypto: false,
+      }
     }
-    
-    // More aggressive optimizations
-    config.optimization.minimize = true;
-    
-    // Make sure TypeScript doesn't cause issues
-    config.resolve.extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
-    
-    // Fix @ path aliases
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': require('path').resolve(__dirname),
-    };
-    
-    return config;
+    return config
   }
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig

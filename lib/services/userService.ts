@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { Prisma, User } from '@prisma/client';
+import { User } from '@/app/types/prisma';
 
 export type UserWithoutPassword = Omit<User, 'password' | 'salt'>;
 

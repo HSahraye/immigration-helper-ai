@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { analyzeDocument } from '@/lib/agents/documentAnalyzer';
-import { DocumentStatus } from '@prisma/client';
+import { DocumentStatus } from '@/app/types/prisma';
 
 export async function POST(req: Request) {
   try {

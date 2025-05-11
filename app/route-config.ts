@@ -2,6 +2,8 @@
  * Shared configuration for dynamic routes
  */
 
+import { NextResponse } from 'next/server';
+
 // Function to provide empty static params for dynamic routes
 export function generateStaticParams() {
   return [];
@@ -10,11 +12,8 @@ export function generateStaticParams() {
 // Helper method to handle API errors consistently
 export function handleApiError(error: unknown, message: string) {
   console.error(`API Error - ${message}:`, error);
-  return new Response(
-    JSON.stringify({ error: message }),
-    { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    }
+  return NextResponse.json(
+    { error: message },
+    { status: 500 }
   );
 } 

@@ -1,23 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { cookies } from 'next/headers';
-import { createHash, randomBytes } from 'crypto';
 import { hash } from 'bcryptjs';
-import prisma from '@/lib/prisma';
+import { prisma, isBuildTime } from '@/lib/prisma';
 
-const prismaClient = new PrismaClient();
+// Add dynamic flag to prevent static generation attempts
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-// Password hashing function
-function hashPassword(password: string): { hash: string; salt: string } {
-  const salt = randomBytes(16).toString('hex');
-  const hash = createHash('sha256')
-    .update(password + salt)
-    .digest('hex');
-  return { hash, salt };
-}
+// Mock user for build time
+const getMockUser = () => ({
+  id: 'mock-user-id',
+  name: 'Mock User',
+  email: 'mock@example.com',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
 
 export async function POST(req: Request) {
   try {
+    // Return mock data during build time
+    if (isBuildTime()) {
+      console.log('Build time detected in register route, returning mock user');
+      return NextResponse.json({
+        message: 'User created successfully',
+        user: getMockUser(),
+        isMock: true
+      }, { status: 201 });
+    }
+
     const { name, email, password } = await req.json();
 
     // Validate input
@@ -33,6 +43,12 @@ export async function POST(req: Request) {
         { message: 'Password must be at least 8 characters long' },
         { status: 400 }
       );
+    }
+
+    // Check if Prisma is initialized
+    if (!prisma) {
+      console.error('Prisma client not initialized');
+      return NextResponse.json({ error: 'Database connection not available' }, { status: 503 });
     }
 
     // Check if user already exists
@@ -71,6 +87,16 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     console.error('Registration error:', error);
+    
+    // If we're in build time and hit an error, return mock user
+    if (isBuildTime()) {
+      return NextResponse.json({
+        message: 'User created successfully',
+        user: getMockUser(),
+        isMock: true
+      }, { status: 201 });
+    }
+    
     return NextResponse.json(
       { message: 'An error occurred during registration' },
       { status: 500 }

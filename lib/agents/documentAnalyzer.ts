@@ -1,4 +1,4 @@
-import { Document } from '@prisma/client';
+import { Document } from '@/app/types/prisma';
 import { OpenAI } from 'openai';
 
 const openai = new OpenAI({

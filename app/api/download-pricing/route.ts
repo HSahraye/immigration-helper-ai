@@ -19,10 +19,10 @@ export async function GET() {
   });
 
   // Return the CSV as a download
-  return new NextResponse(csvContent, {
+  return new Response(csvContent, {
     headers: {
       'Content-Type': 'text/csv',
-      'Content-Disposition': 'attachment; filename=zazu-quick-prep-pricing.csv'
+      'Content-Disposition': 'attachment; filename=pricing.csv'
     }
   });
 } 

@@ -1,19 +1,21 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { PrismaClient } from '@prisma/client';
-import { isBuildTime, getMockSession } from '../../setupMocksForBuild';
+import { prisma, isBuildTime } from '@/lib/prisma';
 
 // Add dynamic flag to prevent static generation attempts
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-// Initialize Prisma client
-let prisma: PrismaClient;
-
-// Only initialize PrismaClient if not in build time to prevent connection errors
-if (!isBuildTime()) {
-  prisma = new PrismaClient();
-}
+// Mock session for build time
+const getMockSession = () => ({
+  user: {
+    id: 'mock-user-id',
+    name: 'Mock User',
+    email: 'mock@example.com',
+    role: 'USER',
+  }
+});
 
 export async function GET() {
   try {
@@ -30,6 +32,12 @@ export async function GET() {
 
     if (!sessionToken) {
       return NextResponse.json({ user: null });
+    }
+
+    // Check if Prisma is initialized
+    if (!prisma) {
+      console.error('Prisma client not initialized');
+      return NextResponse.json({ error: 'Database connection not available' }, { status: 503 });
     }
 
     // Find the session

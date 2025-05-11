@@ -1,14 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, ChevronDown, LogOut, Settings, Layout } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { data: session, status } = useSession();
+  const router = useRouter();
   
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    setIsMenuOpen(false);
+    setIsDropdownOpen(false);
+    router.push('/');
+  };
+
+  const handleSignIn = () => {
+    router.push('/auth/signin');
+  };
+
   // Handle loading state
   if (status === 'loading') {
     return (
@@ -33,12 +58,6 @@ export default function Navigation() {
     );
   }
 
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
-    setIsMenuOpen(false);
-    window.location.href = '/';
-  };
-
   return (
     <nav className="bg-black text-white sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,26 +80,60 @@ export default function Navigation() {
               <Link href="/" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
                 Home
               </Link>
-              <Link href="/resources" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
-                Resources
+              <Link href="/learn-more" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
+                Learn More
               </Link>
               <Link href="/pricing" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
                 Pricing
               </Link>
-              <Link href="/chat" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
-                Chat
-              </Link>
-              <Link href="/documents" className="hover:bg-white hover:text-black px-3 py-2 rounded-md font-medium">
-                Documents
-              </Link>
               {session?.user ? (
-                <Link href="/account" className="bg-white text-black px-4 py-2 rounded-full font-medium transition-colors hover:bg-gray-200">
-                  {session.user.name || session.user.email?.split('@')[0]}
-                </Link>
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center bg-white text-black px-4 py-2 rounded-full font-medium transition-colors hover:bg-gray-200"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    <span>{session.user.name || session.user.email?.split('@')[0]}</span>
+                    <ChevronDown className="h-4 w-4 ml-2" />
+                  </button>
+                  
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                      <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                        <Link
+                          href="/dashboard"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <Layout className="h-4 w-4 mr-2" />
+                          Dashboard
+                        </Link>
+                        <Link
+                          href="/account"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <Settings className="h-4 w-4 mr-2" />
+                          Account Settings
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : (
-                <Link href="/auth/signin" className="bg-white text-black px-4 py-2 rounded-full font-medium transition-colors hover:bg-gray-200">
+                <button
+                  onClick={handleSignIn}
+                  className="bg-white text-black px-4 py-2 rounded-full font-medium transition-colors hover:bg-gray-200"
+                >
                   Sign In
-                </Link>
+                </button>
               )}
             </div>
           </div>
@@ -88,11 +141,23 @@ export default function Navigation() {
           <div className="md:hidden flex items-center">
             {/* Profile info (visible even when menu is closed) */}
             {session?.user ? (
-              <Link href="/account" className="p-1 mr-3 flex items-center">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="p-1 mr-3 flex items-center"
+              >
                 <User className="h-5 w-5 mr-1" />
                 <span className="text-sm">{session.user.name || session.user.email?.split('@')[0]}</span>
-              </Link>
-            ) : null}
+                <ChevronDown className="h-4 w-4 ml-1" />
+              </button>
+            ) : (
+              <button
+                onClick={handleSignIn}
+                className="p-1 mr-3 flex items-center"
+              >
+                <User className="h-5 w-5 mr-1" />
+                <span className="text-sm">Sign In</span>
+              </button>
+            )}
             
             {/* Mobile menu button */}
             <button
@@ -121,11 +186,11 @@ export default function Navigation() {
               Home
             </Link>
             <Link
-              href="/resources"
+              href="/learn-more"
               className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
               onClick={() => setIsMenuOpen(false)}
             >
-              Resources
+              Learn More
             </Link>
             <Link
               href="/pricing"
@@ -134,37 +199,21 @@ export default function Navigation() {
             >
               Pricing
             </Link>
-            {!session?.user && (
-              <Link
-                href="/auth/signin"
-                className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sign In
-              </Link>
-            )}
-            <Link
-              href="/chat"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Chat
-            </Link>
-            <Link
-              href="/documents"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Documents
-            </Link>
-            {session?.user && (
+            {session?.user ? (
               <>
+                <Link
+                  href="/dashboard"
+                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
                 <Link
                   href="/account"
                   className="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  My Account
+                  Account Settings
                 </Link>
                 <button
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
@@ -173,6 +222,13 @@ export default function Navigation() {
                   Sign Out
                 </button>
               </>
+            ) : (
+              <button
+                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:text-black"
+                onClick={handleSignIn}
+              >
+                Sign In
+              </button>
             )}
           </div>
         </div>

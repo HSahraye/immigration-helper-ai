@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation';
 import { Github, Mail } from 'lucide-react';
 import Link from 'next/link';
 
-export default function SignIn() {
+export default function SignUp() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -18,7 +20,38 @@ export default function SignIn() {
     setIsLoading(true);
     setError('');
 
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create account');
+      }
+
+      // Sign in the user after successful registration
       const result = await signIn('credentials', {
         email,
         password,
@@ -26,18 +59,18 @@ export default function SignIn() {
       });
 
       if (result?.error) {
-        setError('Invalid email or password');
+        setError('Failed to sign in after registration');
       } else {
         router.push('/dashboard');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError(err instanceof Error ? err.message : 'An error occurred during registration');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGithubSignIn = () => {
+  const handleGithubSignUp = () => {
     signIn('github', { callbackUrl: '/dashboard' });
   };
 
@@ -50,12 +83,12 @@ export default function SignIn() {
           </div>
         </Link>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-          Sign in to your account
+          Create your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
-          Or{' '}
-          <Link href="/auth/signup" className="font-medium text-blue-500 hover:text-blue-400">
-            create a new account
+          Already have an account?{' '}
+          <Link href="/auth/signin" className="font-medium text-blue-500 hover:text-blue-400">
+            Sign in
           </Link>
         </p>
       </div>
@@ -63,6 +96,24 @@ export default function SignIn() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-gray-900 py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-white">
+                Full name
+              </label>
+              <div className="mt-1">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-gray-800 text-white"
+                />
+              </div>
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-white">
                 Email address
@@ -90,7 +141,7 @@ export default function SignIn() {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -99,24 +150,42 @@ export default function SignIn() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
+            <div>
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-white">
+                Confirm password
+              </label>
+              <div className="mt-1">
                 <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-700 rounded bg-gray-800"
+                  id="confirm-password"
+                  name="confirm-password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-gray-800 text-white"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
-                  Remember me
-                </label>
               </div>
+            </div>
 
-              <div className="text-sm">
-                <Link href="/auth/forgot-password" className="font-medium text-blue-500 hover:text-blue-400">
-                  Forgot your password?
+            <div className="flex items-center">
+              <input
+                id="terms"
+                name="terms"
+                type="checkbox"
+                required
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-700 rounded bg-gray-800"
+              />
+              <label htmlFor="terms" className="ml-2 block text-sm text-gray-400">
+                I agree to the{' '}
+                <Link href="/terms" className="text-blue-500 hover:text-blue-400">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" className="text-blue-500 hover:text-blue-400">
+                  Privacy Policy
                 </Link>
-              </div>
+              </label>
             </div>
 
             {error && (
@@ -129,7 +198,7 @@ export default function SignIn() {
                 disabled={isLoading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
+                {isLoading ? 'Creating account...' : 'Create account'}
               </button>
             </div>
           </form>
@@ -146,7 +215,7 @@ export default function SignIn() {
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
-                onClick={handleGithubSignIn}
+                onClick={handleGithubSignUp}
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-sm font-medium text-gray-400 hover:bg-gray-700"
               >
                 <Github className="h-5 w-5" />

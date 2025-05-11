@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { createHash, randomBytes } from 'crypto';
+import { hash } from 'bcryptjs';
+import prisma from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+const prismaClient = new PrismaClient();
 
 // Password hashing function
 function hashPassword(password: string): { hash: string; salt: string } {
@@ -14,13 +16,23 @@ function hashPassword(password: string): { hash: string; salt: string } {
   return { hash, salt };
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { name, email, password } = await request.json();
+    const { name, email, password } = await req.json();
 
-    // Validate inputs
-    if (!name || !email || !password) {
-      return NextResponse.json({ error: 'Name, email, and password are required' }, { status: 400 });
+    // Validate input
+    if (!email || !password) {
+      return NextResponse.json(
+        { message: 'Email and password are required' },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 8) {
+      return NextResponse.json(
+        { message: 'Password must be at least 8 characters long' },
+        { status: 400 }
+      );
     }
 
     // Check if user already exists
@@ -29,53 +41,39 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: 'Email already in use' }, { status: 409 });
+      return NextResponse.json(
+        { message: 'User with this email already exists' },
+        { status: 409 }
+      );
     }
 
-    // Hash the password
-    const { hash, salt } = hashPassword(password);
+    // Hash password
+    const hashedPassword = await hash(password, 12);
 
-    // Create the user
+    // Create user
     const user = await prisma.user.create({
       data: {
         name,
         email,
-        password: hash,
-        salt,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
+        password: hashedPassword,
       },
     });
 
-    // Generate a session token
-    const sessionToken = randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user;
 
-    // Save the session
-    await prisma.session.create({
-      data: {
-        sessionToken,
-        userId: user.id,
-        expires,
+    return NextResponse.json(
+      {
+        message: 'User created successfully',
+        user: userWithoutPassword,
       },
-    });
-
-    // Set cookie
-    cookies().set('session-token', sessionToken, {
-      expires,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    return NextResponse.json({ user });
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Registration error:', error);
-    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'An error occurred during registration' },
+      { status: 500 }
+    );
   }
 } 

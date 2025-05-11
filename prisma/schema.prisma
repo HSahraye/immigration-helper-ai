@@ -17,7 +17,7 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String    @unique
   emailVerified DateTime?
   password      String?   // Added password field for email/password auth
   salt          String?   // Added salt field for password hashing
@@ -197,4 +197,12 @@ enum DocumentStatus {
   DRAFT
   COMPLETED
   ARCHIVED
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

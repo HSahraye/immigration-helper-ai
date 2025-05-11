@@ -43,18 +43,18 @@ export function HomeContent() {
               Helping you prepare immigration and legal documents with confidence and speed.
             </p>
             <div className="flex justify-center gap-4">
-              <a 
-                href="/resources" 
+              <Link 
+                href="/get-started" 
                 className="bg-white text-black px-8 py-3 rounded-lg font-semibold transition-all hover:bg-gray-200"
               >
                 Get Started
-              </a>
-              <a 
-                href="#features" 
+              </Link>
+              <Link 
+                href="/learn-more" 
                 className="border border-white hover:border-gray-300 px-8 py-3 rounded-lg font-semibold transition-all"
               >
                 Learn More
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

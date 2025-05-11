@@ -1,3 +1,5 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 /node_modules
 /.pnp
@@ -41,4 +43,13 @@ yarn-error.log*
 next-env.d.ts
 
 # TypeScript compiled output
-/dist/ 
+/dist/
+
+# Prisma
+/prisma/migrations/
+/prisma/*.db
+/prisma/*.db-journal
+
+# IDE
+.vscode/
+.idea/ 

@@ -1,3 +1,4 @@
+import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
@@ -19,6 +20,27 @@ const publicPaths = [
   '/chat/',
   '/api/chat'
 ];
+
+export default withAuth(
+  function middleware(req) {
+    // Add custom middleware logic here if needed
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
+  }
+);
+
+export const config = {
+  matcher: [
+    '/dashboard/:path*',
+    '/account/:path*',
+    '/services/:path*',
+    '/chat/:path*',
+  ],
+};
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -79,10 +101,4 @@ export async function middleware(request: NextRequest) {
   }
   
   return NextResponse.next();
-}
-
-export const config = {
-  matcher: [
-    '/((?!api/auth|_next/static|_next/image|favicon.ico).*)',
-  ],
-}; 
+} 

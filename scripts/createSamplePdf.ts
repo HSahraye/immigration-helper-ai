@@ -16,7 +16,7 @@ async function createSamplePdf() {
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     
     // Draw text on the page
-    page.drawText('Sample PDF for Immigration Helper AI', {
+    page.drawText('Sample PDF for ZazuGroups', {
       x: 50,
       y: 750,
       size: 24,
@@ -32,7 +32,7 @@ async function createSamplePdf() {
       color: rgb(0, 0, 0),
     });
     
-    page.drawText('and analysis functionality of the Immigration Helper AI.', {
+    page.drawText('and analysis functionality of the ZazuGroups.', {
       x: 50,
       y: 680,
       size: 12,

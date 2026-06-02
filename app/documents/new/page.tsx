@@ -18,7 +18,7 @@ import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Create Document | Immigration Helper AI',
+  title: 'Create Document | ZazuGroups',
   description: 'Generate new immigration documents with AI assistance.',
 };
 

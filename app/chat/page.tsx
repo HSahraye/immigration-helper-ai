@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 const ChatInterface = dynamic(() => import('../components/ChatInterface'), { ssr: false });
 
 export const metadata: Metadata = {
-  title: 'AI Chat Assistant - Immigration Helper AI',
+  title: 'AI Chat Assistant - ZazuGroups',
   description: 'Get instant answers to your immigration-related questions with our AI chat assistant.',
 };
 

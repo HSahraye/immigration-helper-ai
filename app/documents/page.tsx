@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Document Analysis - Immigration Helper AI',
+  title: 'Document Analysis - ZazuGroups',
   description: 'Upload and analyze your immigration documents with AI-powered insights.',
 };
 

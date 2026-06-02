@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import DocumentEditor from './DocumentEditor';
 
 export const metadata: Metadata = {
-  title: 'Edit Document | Immigration Helper AI',
+  title: 'Edit Document | ZazuGroups',
   description: 'Edit your immigration document.',
 };
 

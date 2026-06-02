@@ -544,7 +544,7 @@ ${initialAssessmentQuestions[0]}`
         <div className="h-full flex flex-col overflow-hidden">
           {/* Sidebar Header */}
           <div className="p-4 flex items-center justify-between border-b border-gray-800">
-            <h2 className="text-xl font-semibold text-gray-200">Immigration Helper AI</h2>
+            <h2 className="text-xl font-semibold text-gray-200">ZazuGroups</h2>
             <button
               onClick={() => setSidebarOpen(false)}
               className="p-2 hover:bg-[#303134] rounded-lg text-gray-300"
@@ -648,7 +648,7 @@ ${initialAssessmentQuestions[0]}`
             <Menu size={24} />
           </button>
           <div className="flex items-center space-x-2">
-            <span className="font-semibold text-gray-200">Immigration Helper AI</span>
+            <span className="font-semibold text-gray-200">ZazuGroups</span>
             <span className="text-sm text-gray-400">2.0</span>
           </div>
           <div className="flex items-center space-x-4">
@@ -678,7 +678,7 @@ ${initialAssessmentQuestions[0]}`
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Message Immigration Helper AI..."
+                  placeholder="Message ZazuGroups..."
                   className="chat-input w-full py-4 px-6 pr-24 text-gray-200"
                 />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-2">

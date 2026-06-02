@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Enterprise Solutions - Immigration Helper AI',
+  title: 'Enterprise Solutions - ZazuGroups',
   description: 'Custom immigration solutions for enterprises. Get dedicated support, custom integrations, and volume discounts.',
 };
 
@@ -149,7 +149,7 @@ export default function EnterprisePage() {
               Our team will get back to you within 24 hours to discuss your needs.
             </p>
             <a
-              href="mailto:enterprise@immigration-helper.ai"
+              href="mailto:enterprise@zazugroups.org"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition-colors"
             >
               Email Us Directly

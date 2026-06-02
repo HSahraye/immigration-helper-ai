@@ -4,8 +4,8 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 export const metadata: Metadata = {
-  title: 'Subscribe - Immigration Helper AI',
-  description: 'Choose your subscription plan and get started with Immigration Helper AI.',
+  title: 'Subscribe - ZazuGroups',
+  description: 'Choose your subscription plan and get started with ZazuGroups.',
 };
 
 const PLANS = {

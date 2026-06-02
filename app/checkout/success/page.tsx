@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Payment Successful - Immigration Helper AI',
+  title: 'Payment Successful - ZazuGroups',
   description: 'Your subscription has been successfully activated.',
 };
 
@@ -34,7 +34,7 @@ export default async function SuccessPage({
             </div>
             <h1 className="text-4xl font-bold mb-4">Payment Successful!</h1>
             <p className="text-xl text-gray-400 mb-8">
-              Thank you for subscribing to Immigration Helper AI, {userName}! Your account has been upgraded.
+              Thank you for subscribing to ZazuGroups, {userName}! Your account has been upgraded.
             </p>
           </div>
 

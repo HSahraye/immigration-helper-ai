@@ -175,7 +175,7 @@ export default function ContactPage() {
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
             <div className="bg-black/50 backdrop-blur-sm p-6 rounded-xl border border-white/10">
               <h3 className="text-xl font-bold mb-2">Email Us</h3>
-              <p className="text-gray-300">support@immigrationhelperai.com</p>
+              <p className="text-gray-300">support@zazugroups.org</p>
             </div>
             <div className="bg-black/50 backdrop-blur-sm p-6 rounded-xl border border-white/10">
               <h3 className="text-xl font-bold mb-2">Call Us</h3>

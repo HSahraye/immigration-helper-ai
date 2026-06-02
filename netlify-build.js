@@ -120,7 +120,7 @@ function createBackupSite() {
     <html>
       <head>
         <meta charset="utf-8">
-        <title>Immigration Helper AI</title>
+        <title>ZazuGroups</title>
         <style>
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -157,7 +157,7 @@ function createBackupSite() {
       </head>
       <body>
         <div class="container">
-          <h1>Immigration Helper AI</h1>
+          <h1>ZazuGroups</h1>
           <p>Your AI-powered immigration assistant</p>
           <div class="message">
             <p>This is a static preview of the application. The full experience is available when connected to the backend services.</p>

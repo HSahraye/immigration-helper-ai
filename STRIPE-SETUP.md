@@ -1,6 +1,6 @@
-# Stripe Setup Guide for Immigration Helper AI
+# Stripe Setup Guide for ZazuGroups
 
-This guide will help you set up your Stripe account for processing subscriptions for the Immigration Helper AI application.
+This guide will help you set up your Stripe account for processing subscriptions for the ZazuGroups application.
 
 ## 1. Create a Stripe Account
 

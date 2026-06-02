@@ -36,7 +36,7 @@ export default function TabLayout({ children }: { children: React.ReactNode }) {
           <div className="flex justify-center mb-4">
             <Globe className="h-12 w-12 text-blue-600" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Immigration Helper AI</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">ZazuGroups</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Your personal AI assistant for immigration-related questions and guidance
           </p>

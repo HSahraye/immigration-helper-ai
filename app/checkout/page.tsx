@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { CheckoutForm } from '@/app/checkout/checkout-form';
 
 export const metadata: Metadata = {
-  title: 'Checkout - Immigration Helper AI',
-  description: 'Complete your subscription to Immigration Helper AI.',
+  title: 'Checkout - ZazuGroups',
+  description: 'Complete your subscription to ZazuGroups.',
 };
 
 const PLANS = {

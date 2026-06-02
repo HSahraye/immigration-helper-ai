@@ -1,4 +1,4 @@
-# Immigration Helper AI
+# ZazuGroups
 
 A comprehensive platform providing specialized AI assistance for various immigration topics. Each AI agent is trained on specific immigration topics to provide accurate, detailed, and up-to-date information.
 
@@ -17,7 +17,7 @@ A comprehensive platform providing specialized AI assistance for various immigra
 
 ## Overview
 
-Immigration Helper AI is a Next.js application that uses specialized AI agents to provide accurate and helpful information on various immigration topics. Each agent is trained on a comprehensive dataset specific to its area of expertise, allowing it to provide detailed and contextually relevant responses to user queries.
+ZazuGroups is a Next.js application that uses specialized AI agents to provide accurate and helpful information on various immigration topics. Each agent is trained on a comprehensive dataset specific to its area of expertise, allowing it to provide detailed and contextually relevant responses to user queries.
 
 ## Features
 
@@ -52,8 +52,8 @@ The platform includes specialized agents for the following immigration topics:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/immigration-helper-ai.git
-   cd immigration-helper-ai
+   git clone https://github.com/yourusername/zazugroups.git
+   cd zazugroups
    ```
 
 2. Install dependencies:

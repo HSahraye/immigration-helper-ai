@@ -1,4 +1,4 @@
-# Google OAuth Setup Guide for Immigration Helper AI
+# Google OAuth Setup Guide for ZazuGroups
 
 This guide will help you correctly set up Google OAuth credentials for your application to fix the `Error 401: invalid_client` authentication problem.
 
@@ -7,7 +7,7 @@ This guide will help you correctly set up Google OAuth credentials for your appl
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Click on the project dropdown at the top of the page
 3. Click "New Project"
-4. Enter a name (e.g., "Immigration Helper AI")
+4. Enter a name (e.g., "ZazuGroups")
 5. Click "Create"
 6. Wait for the project to be created and make sure it's selected in the project dropdown
 
@@ -17,7 +17,7 @@ This guide will help you correctly set up Google OAuth credentials for your appl
 2. Select "External" as the user type (unless you have a Google Workspace organization)
 3. Click "Create"
 4. Fill out the required fields:
-   - App name: "Immigration Helper AI"
+   - App name: "ZazuGroups"
    - User support email: Your email address
    - Developer contact information: Your email address
 5. Click "Save and Continue"
@@ -37,7 +37,7 @@ This guide will help you correctly set up Google OAuth credentials for your appl
 1. From the left sidebar, click on "Credentials"
 2. Click the "Create Credentials" button and select "OAuth client ID"
 3. For "Application type", select "Web application"
-4. Name: "Immigration Helper AI Web Client"
+4. Name: "ZazuGroups Web Client"
 5. Under "Authorized JavaScript origins", click "Add URI" and enter:
    ```
    http://localhost:3000

@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Document Details | Immigration Helper AI',
+  title: 'Document Details | ZazuGroups',
   description: 'View and manage your immigration document.',
 };
 

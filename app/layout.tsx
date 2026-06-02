@@ -8,7 +8,7 @@ import Navigation from './components/Navigation'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Zazu Quick Prep',
+  title: 'ZazuGroups',
   description: 'Your trusted partner for immigration and legal document preparation.',
 }
 

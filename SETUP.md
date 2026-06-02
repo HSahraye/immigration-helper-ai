@@ -1,4 +1,4 @@
-# Email Setup Guide for Immigration Helper AI
+# Email Setup Guide for ZazuGroups
 
 To enable the contact forms to send real emails, you'll need to configure your Gmail account to work with the application. Follow these steps:
 
@@ -11,7 +11,7 @@ For security reasons, Gmail requires an "App Password" instead of your regular a
 3. Under "Signing in to Google," select "2-Step Verification" (enable it if not already enabled)
 4. At the bottom of the page, select "App passwords"
 5. Select "Mail" as the app and "Other" as the device
-6. Enter "Immigration Helper AI" as the name
+6. Enter "ZazuGroups" as the name
 7. Click "Generate"
 8. Google will display a 16-character password. **Copy this password**
 

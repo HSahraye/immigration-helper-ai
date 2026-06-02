@@ -8,7 +8,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}===================================${NC}"
-echo -e "${GREEN}Immigration Helper AI - Dev Starter${NC}"
+echo -e "${GREEN}ZazuGroups - Dev Starter${NC}"
 echo -e "${BLUE}===================================${NC}\n"
 
 # Check for .env.local file

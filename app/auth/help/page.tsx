@@ -188,7 +188,7 @@ export default function AuthHelpPage() {
           
           <div className="flex flex-wrap gap-4">
             <a
-              href="mailto:support@immigrationhelper.ai"
+              href="mailto:support@zazugroups.org"
               className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors"
             >
               <span>Email Support</span>

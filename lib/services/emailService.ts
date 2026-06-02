@@ -58,13 +58,13 @@ export async function sendWelcomeEmail(userId: string) {
 
     // Send email
     const info = await transporter.sendMail({
-      from: `"Immigration Helper AI" <${process.env.EMAIL_FROM || 'noreply@immigrationhelper.ai'}>`,
+      from: `"ZazuGroups" <${process.env.EMAIL_FROM || 'noreply@zazugroups.org'}>`,
       to: user.email,
-      subject: 'Welcome to Immigration Helper AI!',
+      subject: 'Welcome to ZazuGroups!',
       text: `
         Hi ${user.name || 'there'},
         
-        Welcome to Immigration Helper AI! We're excited to have you on board.
+        Welcome to ZazuGroups! We're excited to have you on board.
         
         With our platform, you can get expert guidance on immigration processes, visa applications,
         citizenship, and more. Here's what you can do:
@@ -79,11 +79,11 @@ export async function sendWelcomeEmail(userId: string) {
         If you have any questions, feel free to reply to this email.
         
         Best regards,
-        The Immigration Helper AI Team
+        The ZazuGroups Team
       `,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Welcome to Immigration Helper AI!</h2>
+          <h2>Welcome to ZazuGroups!</h2>
           <p>Hi ${user.name || 'there'},</p>
           <p>We're excited to have you on board.</p>
           
@@ -104,7 +104,7 @@ export async function sendWelcomeEmail(userId: string) {
           
           <p>If you have any questions, feel free to reply to this email.</p>
           
-          <p>Best regards,<br>The Immigration Helper AI Team</p>
+          <p>Best regards,<br>The ZazuGroups Team</p>
         </div>
       `,
     });
@@ -148,13 +148,13 @@ export async function sendUsageLimitNotification(userId: string) {
 
     // Send email
     const info = await transporter.sendMail({
-      from: `"Immigration Helper AI" <${process.env.EMAIL_FROM || 'noreply@immigrationhelper.ai'}>`,
+      from: `"ZazuGroups" <${process.env.EMAIL_FROM || 'noreply@zazugroups.org'}>`,
       to: user.email,
       subject: "You've Reached Your Free Usage Limit",
       text: `
         Hi ${user.name || 'there'},
         
-        You've reached your daily limit of free conversations with Immigration Helper AI.
+        You've reached your daily limit of free conversations with ZazuGroups.
         
         To continue getting unlimited help with your immigration needs, consider upgrading
         to one of our premium plans starting at just $9.99/month.
@@ -168,14 +168,14 @@ export async function sendUsageLimitNotification(userId: string) {
         - And much more!
         
         Best regards,
-        The Immigration Helper AI Team
+        The ZazuGroups Team
       `,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2>You've Reached Your Free Usage Limit</h2>
           <p>Hi ${user.name || 'there'},</p>
           
-          <p>You've reached your daily limit of free conversations with Immigration Helper AI.</p>
+          <p>You've reached your daily limit of free conversations with ZazuGroups.</p>
           
           <p>To continue getting unlimited help with your immigration needs, consider upgrading
           to one of our premium plans starting at just $9.99/month.</p>
@@ -193,7 +193,7 @@ export async function sendUsageLimitNotification(userId: string) {
             <li>And much more!</li>
           </ul>
           
-          <p>Best regards,<br>The Immigration Helper AI Team</p>
+          <p>Best regards,<br>The ZazuGroups Team</p>
         </div>
       `,
     });
@@ -230,7 +230,7 @@ export async function sendSubscriptionConfirmation(userId: string, planName: str
 
     // Send email
     const info = await transporter.sendMail({
-      from: `"Immigration Helper AI" <${process.env.EMAIL_FROM || 'noreply@immigrationhelper.ai'}>`,
+      from: `"ZazuGroups" <${process.env.EMAIL_FROM || 'noreply@zazugroups.org'}>`,
       to: user.email,
       subject: `Your Subscription to ${planName} is Confirmed!`,
       text: `
@@ -249,7 +249,7 @@ export async function sendSubscriptionConfirmation(userId: string, planName: str
         If you have any questions about your subscription, please reply to this email.
         
         Best regards,
-        The Immigration Helper AI Team
+        The ZazuGroups Team
       `,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -273,7 +273,7 @@ export async function sendSubscriptionConfirmation(userId: string, planName: str
           
           <p>If you have any questions about your subscription, please reply to this email.</p>
           
-          <p>Best regards,<br>The Immigration Helper AI Team</p>
+          <p>Best regards,<br>The ZazuGroups Team</p>
         </div>
       `,
     });
@@ -310,7 +310,7 @@ export async function sendSubscriptionCancellation(userId: string) {
 
     // Send email
     const info = await transporter.sendMail({
-      from: `"Immigration Helper AI" <${process.env.EMAIL_FROM || 'noreply@immigrationhelper.ai'}>`,
+      from: `"ZazuGroups" <${process.env.EMAIL_FROM || 'noreply@zazugroups.org'}>`,
       to: user.email,
       subject: 'Your Subscription Has Been Canceled',
       text: `
@@ -326,7 +326,7 @@ export async function sendSubscriptionCancellation(userId: string) {
         If you change your mind, you can resubscribe anytime: ${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/subscribe
         
         Best regards,
-        The Immigration Helper AI Team
+        The ZazuGroups Team
       `,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -347,7 +347,7 @@ export async function sendSubscriptionCancellation(userId: string) {
             text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">
             Resubscribe</a></p>
           
-          <p>Best regards,<br>The Immigration Helper AI Team</p>
+          <p>Best regards,<br>The ZazuGroups Team</p>
         </div>
       `,
     });

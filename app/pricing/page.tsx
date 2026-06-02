@@ -1,7 +1,7 @@
 import { PricingTable } from '@/app/components/PricingTable';
 
 export const metadata = {
-  title: 'Pricing | Immigration Helper AI',
+  title: 'Pricing | ZazuGroups',
   description: 'View our pricing for document preparation, filing services, and immigration assistance.',
 };
 

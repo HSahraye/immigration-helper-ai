@@ -48,7 +48,7 @@ export default function Navigation() {
                   <span className="text-white font-bold text-xl">Z</span>
                 </div>
                 <span className="text-xl md:text-2xl font-bold text-white">
-                  Zazu Quick Prep
+                  ZazuGroups
                 </span>
               </Link>
             </div>
@@ -70,7 +70,7 @@ export default function Navigation() {
                 <span className="text-white font-bold text-xl">Z</span>
               </div>
               <span className="text-xl md:text-2xl font-bold text-white">
-                Zazu Quick Prep
+                ZazuGroups
               </span>
             </Link>
           </div>

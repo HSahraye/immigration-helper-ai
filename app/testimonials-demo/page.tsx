@@ -1,7 +1,7 @@
 import { TestimonialsSection } from "@/app/components/TestimonialsSection";
 
 export const metadata = {
-  title: "Testimonials | Immigration Helper AI",
+  title: "Testimonials | ZazuGroups",
   description: "Hear from our clients about their immigration and legal document experiences",
 };
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🔄 Restarting Immigration Helper AI application..."
+echo "🔄 Restarting ZazuGroups application..."
 
 # Kill any running Next.js development processes
 echo "🛑 Stopping running servers..."

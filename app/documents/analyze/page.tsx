@@ -9,7 +9,7 @@ import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Analyze Document | Immigration Helper AI',
+  title: 'Analyze Document | ZazuGroups',
   description: 'Analyze immigration documents with AI for feedback and improvements.',
 };
 

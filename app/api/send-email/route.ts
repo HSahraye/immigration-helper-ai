@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     // Setup email data
     const mailOptions = {
-      from: `Immigration Helper AI <${emailUser}>`,
+      from: `ZazuGroups <${emailUser}>`,
       to,
       subject,
       text: content,
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
           ${content.replace(/\n/g, '<br>')}
         </div>
         <p style="margin-top: 30px; color: #777; font-size: 12px;">
-          This email was sent from Immigration Helper AI. Please do not reply to this email.
+          This email was sent from ZazuGroups. Please do not reply to this email.
         </p>
       </div>`,
     };

@@ -1,6 +1,6 @@
 # Immigration AI Agent Training Guide
 
-This guide provides a comprehensive overview of the process used to train specialized AI agents for the Immigration Helper platform. Each agent is designed to provide accurate, detailed, and up-to-date information on specific immigration topics.
+This guide provides a comprehensive overview of the process used to train specialized AI agents for the ZazuGroups platform. Each agent is designed to provide accurate, detailed, and up-to-date information on specific immigration topics.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This guide provides a comprehensive overview of the process used to train specia
 
 ## Overview
 
-The Immigration Helper platform uses specialized AI agents to provide accurate and helpful information on various immigration topics. Each agent is trained on a comprehensive dataset specific to its area of expertise, allowing it to provide detailed and contextually relevant responses to user queries.
+The ZazuGroups platform uses specialized AI agents to provide accurate and helpful information on various immigration topics. Each agent is trained on a comprehensive dataset specific to its area of expertise, allowing it to provide detailed and contextually relevant responses to user queries.
 
 The training process involves several key steps:
 1. Collecting comprehensive data from official sources
@@ -549,6 +549,6 @@ If web scraping fails to collect sufficient data:
 
 ## Conclusion
 
-The Immigration Helper platform's AI agents represent a sophisticated approach to providing accurate, helpful, and up-to-date immigration information. By specializing agents in specific topics and training them on comprehensive datasets, the platform can offer detailed and contextually relevant assistance to users navigating complex immigration processes.
+The ZazuGroups platform's AI agents represent a sophisticated approach to providing accurate, helpful, and up-to-date immigration information. By specializing agents in specific topics and training them on comprehensive datasets, the platform can offer detailed and contextually relevant assistance to users navigating complex immigration processes.
 
 The training and maintenance processes ensure that the agents remain accurate and helpful over time, adapting to policy changes and incorporating user feedback for continuous improvement. 

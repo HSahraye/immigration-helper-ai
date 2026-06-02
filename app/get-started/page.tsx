@@ -50,7 +50,7 @@ export default function GetStarted() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Get Started with Zazu</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">Get Started with ZazuGroups</h1>
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
             Your journey to simplified immigration and legal document preparation starts here.
           </p>

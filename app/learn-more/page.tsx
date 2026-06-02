@@ -158,7 +158,7 @@ export default function LearnMore() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">How Zazu Works</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">How ZazuGroups Works</h1>
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
             Leveraging cutting-edge AI technology to simplify your immigration and legal document journey.
           </p>
@@ -173,7 +173,7 @@ export default function LearnMore() {
         >
           <h2 className="text-3xl font-bold mb-6">Our AI Technology</h2>
           <p className="text-lg text-gray-300 mb-6">
-            Zazu's advanced AI system analyzes your documents in real-time, identifying potential issues
+            ZazuGroups' advanced AI system analyzes your documents in real-time, identifying potential issues
             and suggesting improvements. Our technology understands complex legal requirements and
             ensures your documents meet all necessary criteria.
           </p>
